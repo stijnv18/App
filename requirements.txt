@@ -1,0 +1,7 @@
+river
+numpy
+tensorflow
+tide
+psutil
+flask
+plotly
