@@ -1,6 +1,7 @@
 import pandas as pd
 import pickle
 from darts import TimeSeries
+from joblib import load
 
 # Load the data
 df = pd.read_csv('customer_36.csv')
@@ -12,8 +13,8 @@ df['DateTime'] = pd.date_range(start='2010-07-01', periods=len(df), freq='h')
 series = TimeSeries.from_dataframe(df, 'DateTime', 'consumption')
 
 # Load the pre-trained model
-with open('my_model.pkl', 'rb') as f:
-    model = pickle.load(f)
+with open('my_model.joblib', 'rb') as f:
+    model = load('my_model.joblib')
 
 # Check if the model is loaded correctly
 if model is None:

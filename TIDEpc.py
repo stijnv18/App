@@ -8,6 +8,7 @@ from matplotlib import pyplot as plt
 import numpy as np
 from sklearn.metrics import mean_absolute_error
 import pickle
+from joblib import dump
 # Load the data
 df = pd.read_csv('customer_36.csv')
 
@@ -91,4 +92,4 @@ ax.legend()
 plt.show()
 # Save the model
 with open('my_model.pkl', 'wb') as f:
-    pickle.dump(model, f)
+    dump(model, 'my_model.joblib')
