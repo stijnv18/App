@@ -21,6 +21,7 @@ training_running = None
 actual_values = []
 prediction_length = 1
 error = []
+prev_prediction_length = 0
 
 def create_graph(dates, values):
 	# Generate your graph
@@ -42,12 +43,8 @@ def index():
         return render_template('index2.html', graphJSON='null')
 
     # Unpack the dates and values from the prediction
-    prediction_dates = prediction["prediction_dates"]
-    prediction_values = prediction["prediction_values"]
-
-    # Unpack the dates and values from the actual values
-    actual_dates = prediction["actual_dates"]
-    actual_values = prediction["actual_values"]
+    prediction_dates, prediction_values = prediction["prediction_dates"],prediction["prediction_values"]
+    actual_dates, actual_values = prediction["actual_dates"], prediction["actual_values"]
 
     # Call the function to create the graph
     graphJSON = create_graph(prediction_dates, prediction_values, actual_dates, actual_values)
@@ -102,20 +99,23 @@ def handle_start_training():
 	global training_running
 	global prediction_length
 	global prediction_length
+	global prev_prediction_length
 	# Get the model and prediction_length from the request body
 	data = request.get_json()
 	model_name = data.get('model')
 	prediction_length = int(data.get('prediction_length', 1))	
 
  
-	if model_name == 'SNARIMAX' and training_running != 1:
+	if model_name == 'SNARIMAX' and training_running != 1 or prev_prediction_length != prediction_length:
 		training_running = 0
 		time.sleep(0.1)
 		Thread(target=run_SNARIMAX).start()
-	elif model_name == 'Holtwinters' and training_running != 2:
+		prev_prediction_length = prediction_length
+	elif model_name == 'Holtwinters' and training_running != 2 or prev_prediction_length != prediction_length:
 		training_running = 0
 		time.sleep(0.1)
 		Thread(target=run_Holtwinters).start()
+		prev_prediction_length = prediction_length
 	else:
 		abort(400, 'model already running or invalid model selected')
 	return jsonify({'message': 'Training started'})
