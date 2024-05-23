@@ -6,16 +6,18 @@
 </head>
 <body>
     <div id="graph"></div>
-    <button id="start-button">Start snarimax model</button>
+    <button id="start-SNARIMAX-model-button">Start snarimax model</button>
     <button id="start-holt-model-button">Start holt Model</button>
+	<button id="start-TIDE-model-button">Start holt Model</button>
 	<input id="prediction-length" type="number" min="1" value="168">
     <script>
         var graphs = {{ graphJSON | safe }};
         if (graphs) {
             Plotly.newPlot('graph', graphs.data, graphs.layout);
         }
-        document.getElementById('start-button').addEventListener('click', startModel('/start_training', 'SNARIMAX'));
+        document.getElementById('start-SNARIMAX-model-button').addEventListener('click', startModel('/start_training', 'SNARIMAX'));
         document.getElementById('start-holt-model-button').addEventListener('click', startModel('/start_training', 'Holtwinters'));
+		document.getElementById('start-TIDE-model-button').addEventListener('click', startModel('/start_training', 'TIDE'));
 
         function startModel(url, model) {
 			
