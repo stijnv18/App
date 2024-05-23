@@ -91,5 +91,6 @@ ax.legend()
 # Show the plot
 plt.show()
 # Save the model
+model.save("my_model.pt")
 with open('my_model.pkl', 'wb') as f:
     dump(model, 'my_model.joblib')

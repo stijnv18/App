@@ -1,30 +1,24 @@
 import pandas as pd
-import pickle
-from darts import TimeSeries
 from joblib import load
+from darts import TimeSeries
 
-# Load the data
-df = pd.read_csv('customer_36.csv')
-
-# Create a 'DateTime' column
-df['DateTime'] = pd.date_range(start='2010-07-01', periods=len(df), freq='h')
-
-# Create a TimeSeries instance
-series = TimeSeries.from_dataframe(df, 'DateTime', 'consumption')
-
-# Load the pre-trained model
-with open('my_model.joblib', 'rb') as f:
-    model = load('my_model.joblib')
-
-# Check if the model is loaded correctly
+# Load the model from the file
+model = load('my_model.joblib')
+print(model)
 if model is None:
-    print('Failed to load the model')
-else:
-    # Generate a 7-day forecast
-    forecast = model.predict(series)
+    print("Failed to load the model.")
+# Load the data from the CSV file
+df = pd.read_csv('customer_36v2.csv')
 
-    # Replace negative values with 0
-    forecast.values()[forecast.values() < 0] = 0
+# Convert the 'timestamp' column to datetime
+df['timestamp'] = pd.to_datetime(df['timestamp'])
 
-    # Print the forecasted values
-    print('Forecasted values: ', forecast.values())
+# Get predictions one at a time
+for index in range(47, len(df)):
+    # Create a TimeSeries object
+    series = TimeSeries.from_dataframe(df.iloc[:index+1], 'timestamp', 'consumption', freq='H', fill_missing_dates=True)
+    
+    # Predict the next point
+    prediction = model.predict(n=1, series=series)
+    
+    print(f"Prediction for row {index}: {prediction}")
