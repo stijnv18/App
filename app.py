@@ -59,6 +59,7 @@ def index():
 def get_latest_prediction():
 	global latest_prediction
 	global actual_values
+ 
 	if not latest_prediction or not actual_values:
 		return jsonify({'prediction_dates': [], 'prediction_values': [], 'actual_dates': [], 'actual_values': []})
 
@@ -105,16 +106,21 @@ def handle_start_training():
 	data = request.get_json()
 	model_name = data.get('model')
 	prediction_length = int(data.get('prediction_length', 1))	
-	print(prediction_length)
-	if model_name == 'model1' and training_running != 1:
-		Thread(target=run_model1).start()
-	elif model_name == 'model2' and training_running != 2:
-		Thread(target=run_model2).start()
+
+ 
+	if model_name == 'SNARIMAX' and training_running != 1:
+		training_running = 0
+		time.sleep(0.1)
+		Thread(target=run_SNARIMAX).start()
+	elif model_name == 'Holtwinters' and training_running != 2:
+		training_running = 0
+		time.sleep(0.1)
+		Thread(target=run_Holtwinters).start()
 	else:
 		abort(400, 'model already running or invalid model selected')
 	return jsonify({'message': 'Training started'})
 
-def run_model1():
+def run_SNARIMAX():
 	global training_running
 	global latest_prediction
 	global actual_values
@@ -160,7 +166,7 @@ def run_model1():
 		time.sleep(0.1)
 	training_running = 0
 
-def run_model2():
+def run_Holtwinters():
 	global training_running
 	global latest_prediction
 	global actual_values

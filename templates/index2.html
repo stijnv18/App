@@ -14,8 +14,8 @@
         if (graphs) {
             Plotly.newPlot('graph', graphs.data, graphs.layout);
         }
-        document.getElementById('start-button').addEventListener('click', startModel('/start_training', 'model1'));
-        document.getElementById('start-holt-model-button').addEventListener('click', startModel('/start_training', 'model2'));
+        document.getElementById('start-button').addEventListener('click', startModel('/start_training', 'SNARIMAX'));
+        document.getElementById('start-holt-model-button').addEventListener('click', startModel('/start_training', 'Holtwinters'));
 
         function startModel(url, model) {
 			
