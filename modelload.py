@@ -1,9 +1,10 @@
 import pandas as pd
+from darts.models import TiDEModel
 from joblib import load
 from darts import TimeSeries
 
 # Load the model from the file
-model = load('my_model.joblib')
+model = TiDEModel.load('my_model.pt')
 print(model)
 if model is None:
     print("Failed to load the model.")
@@ -13,12 +14,20 @@ df = pd.read_csv('customer_36v2.csv')
 # Convert the 'timestamp' column to datetime
 df['timestamp'] = pd.to_datetime(df['timestamp'])
 
-# Get predictions one at a time
-for index in range(47, len(df)):
-    # Create a TimeSeries object
-    series = TimeSeries.from_dataframe(df.iloc[:index+1], 'timestamp', 'consumption', freq='H', fill_missing_dates=True)
-    
-    # Predict the next point
-    prediction = model.predict(n=1, series=series)
-    
-    print(f"Prediction for row {index}: {prediction}")
+# Create a TimeSeries object from the entire dataframe
+series = TimeSeries.from_dataframe(df, 'timestamp', 'consumption', freq='h', fill_missing_dates=True)
+
+# Predict the next 72 points
+prediction = model.predict(n=72, series=series)
+
+# Get the values of the prediction
+prediction_values = prediction.values()
+
+print(f"Prediction for the next 3 days each hour: {prediction_values}")
+
+# Get the timestamps of the prediction
+prediction_timestamps = prediction.time_index
+
+# Print the prediction values along with their corresponding timestamps
+for timestamp, value in zip(prediction_timestamps, prediction_values):
+    print(f"Prediction for {timestamp}: {value}")
