@@ -4,26 +4,11 @@ import plotly
 import plotly.graph_objs as go
 import json
 import pandas as pd
-import time
-
-from river import compose
-from river import linear_model
-from river import optim
-from river import preprocessing
 from river import time_series
-from sklearn.model_selection import train_test_split
 import pandas as pd
-from river import neighbors
 import time
 from river import metrics
 from datetime import datetime, timedelta
-from river import stream
-from river import evaluate
-import datetime as dt
-import os
-
-from river import datasets
-
 import logging
 
 log = logging.getLogger('werkzeug')
@@ -32,12 +17,8 @@ app = Flask(__name__)
 
 # Global variable to store the latest prediction
 latest_prediction = []
-
-# Global variable to keep track of whether the training is currently running
 training_running = None
-
 actual_values = []
-
 prediction_length = 1
 error = []
 
@@ -46,10 +27,8 @@ def create_graph(dates, values):
 	graph = go.Figure(
 		data=[go.Scatter(x=dates, y=values)]
 	)
-
 	# Convert the figures to JSON
 	graphJSON = json.dumps(graph, cls=plotly.utils.PlotlyJSONEncoder)
-
 	return graphJSON
 
 @app.route('/')
@@ -151,30 +130,18 @@ def run_model1():
 	df = pd.read_csv('merged_data.csv')
 	df['DateTime'] = pd.to_datetime(df['DateTime'])
 
-	X = df.drop('MeanEnergyConsumption', axis=1)
-	y = df['MeanEnergyConsumption']
+	X_train = df.drop('MeanEnergyConsumption', axis=1)
+	y_train = df['MeanEnergyConsumption']
 
 	# Get month and day of the week from the date time column
-	X['Month'] = X['DateTime'].dt.month
-	X['DayOfWeek'] = X['DateTime'].dt.dayofweek
-
-	X_train = X
-	y_train = y
+	X_train['Month'] = X_train['DateTime'].dt.month
+	X_train['DayOfWeek'] = X_train['DateTime'].dt.dayofweek
 
 	# Convert the training set back to DataFrame for the model training
 	train_df = pd.concat([X_train, y_train], axis=1)
 
-	model_without_exog = (
-	time_series.SNARIMAX(
-		p=1,
-		d=0,
-		q=1,
-		sp=0,
-		sd=1,
-		sq=1,
-		m=24
-		)
-	)
+	model_without_exog = (time_series.SNARIMAX(p=1,d=0,q=1,sp=0,sd=1,sq=1,m=24))
+ 
 	mae_without_exog = metrics.MAE()
 	for i, (_, row) in enumerate(train_df.iterrows()):
 		y = row['MeanEnergyConsumption']
@@ -204,20 +171,13 @@ def run_model2():
 	actual_values = []
     
 	print("Running the model training holt...")
-	# Load the data
 	df = pd.read_csv('merged_data.csv')
-
-	# Convert the 'utc_timestamp' column to datetime
 	df['DateTime'] = pd.to_datetime(df['DateTime'])
-
-	# Drop the first row
 	df = df.dropna()
 
 	df['day_of_week'] = df['DateTime'].dt.dayofweek
 	df['hour_of_day'] = df['DateTime'].dt.hour
 	df['month'] = df['DateTime'].dt.month
-
-	df
 
 	stream = iter(df.itertuples(index=False))
 	stream = iter([(x._asdict(), y) for x, y in zip(df.drop('MeanEnergyConsumption', axis=1).itertuples(index=False), df['MeanEnergyConsumption'])])
@@ -232,13 +192,9 @@ def run_model2():
 	)
 
 	metric = metrics.MAE()
-
-	# Create a list to store the predictions
-	predictions = []
-
 	# Assuming 'df' is your DataFrame and 'MeanEnergyConsumption' is what you want to predict
 	for i, (_, row) in enumerate(df.iterrows()):
-		
+	
 		y = row['MeanEnergyConsumption']
 		model.learn_one(y)
 
