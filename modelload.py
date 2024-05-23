@@ -13,14 +13,18 @@ if model is None:
 # Load the data from the CSV file
 df = pd.read_csv('customer_36v2.csv')
 
-# Convert the 'timestamp' column to datetime
+# Convert the 'timestamp' column to datetime if not already done
 df['timestamp'] = pd.to_datetime(df['timestamp'])
 
-# Create a TimeSeries object from the entire dataframe
-series = TimeSeries.from_dataframe(df, 'timestamp', 'consumption', freq='h', fill_missing_dates=True)
+# Split the dataframe
+df_train = df[df['timestamp'] < '2011-06-30']
+df_test = df[df['timestamp'] >= '2011-06-30']
+
+# Create a TimeSeries object from the train dataframe
+series_train = TimeSeries.from_dataframe(df_train, 'timestamp', 'consumption', freq='h', fill_missing_dates=True)
 
 # Predict the next 72 points
-prediction = model.predict(n=72, series=series)
+prediction = model.predict(n=72, series=series_train)
 
 # Get the values of the prediction
 prediction_values = prediction.values()
@@ -38,18 +42,18 @@ prediction = TimeSeries.from_times_and_values(prediction.time_index, prediction_
 
 # Print the prediction values along with their corresponding timestamps
 for timestamp, value in zip(prediction_timestamps, prediction_values):
-    print(f"Prediction for {timestamp}: {value}")
-# Predict the next 72 points
-n = 72
-prediction = model.predict(n=n, series=series)
+	print(f"Prediction for {timestamp}: {value}")
 
-# Slice the actual series to include the last n points plus the points in the last 4 days
-actual = series[-(4*24):]
-
-# Plot the actual consumption
-actual.plot(label='Actual consumption')
-
-# Plot the predictions
-prediction.plot(label='Predicted consumption')
-plt.legend()
-plt.show()
+# Now, for each new hour in the test set, make a prediction
+for index, row in df_test.iterrows():
+    # Create a new TimeSeries object for the new data
+    new_data = TimeSeries.from_times_and_values(pd.date_range(start=row['timestamp'], periods=1, freq='H'), [row['consumption']])
+    
+    # Append the new data to the series
+    series_train = series_train.append(new_data)
+    
+    # Make a prediction for the next hour
+    prediction = model.predict(n=1, series=series_train)
+    
+    # Print the prediction
+    print(f"Prediction for {row['timestamp'] + pd.Timedelta(hours=1)}: {prediction.values()[0]}")
