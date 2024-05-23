@@ -47,7 +47,7 @@ for timestamp, value in zip(prediction_timestamps, prediction_values):
 # Now, for each new hour in the test set, make a prediction
 for index, row in df_test.iterrows():
     # Create a new TimeSeries object for the new data
-    new_data = TimeSeries.from_times_and_values(pd.date_range(start=row['timestamp'], periods=1, freq='H'), [row['consumption']])
+    new_data = TimeSeries.from_times_and_values(pd.date_range(start=row['timestamp'], periods=1, freq='h'), [row['consumption']])
     
     # Append the new data to the series
     series_train = series_train.append(new_data)
