@@ -13,6 +13,9 @@ from darts.models import TiDEModel
 from joblib import load
 from darts import TimeSeries
 import numpy as np
+from influxdb_client import InfluxDBClient, Point, Dialect
+from influxdb_client.client.flux_table import FluxTable
+from influxdb_client.client.write_api import SYNCHRONOUS
 
 log = logging.getLogger('werkzeug')
 log.setLevel(logging.ERROR)
@@ -140,7 +143,30 @@ def run_SNARIMAX():
 	actual_values = []
     
 	print("Running the model training snarimax...")
-	df = pd.read_csv('merged_data.csv')
+	# Connect to the InfluxDB server
+	host = 'http://localhost:8086'
+	token = "kDdfNAmJIkm4V-dFQGebl8gIwc7VZu88u3ZEdcwMMcklivQ1ouIS3VOSo6zXLs_rw6owWpKT1NlOmi5EdWqLOA=="
+	org = "test"
+	bucket = "poggers"
+	client = InfluxDBClient(url=host, token=token, org=org)
+	# Query the data from your bucket
+	query = """from(bucket: "poggers")
+	|> range(start: 2011-11-23T09:00:00Z, stop: 2014-02-28T00:00:00Z)
+	|> filter(fn: (r) => r["_measurement"] == "measurement")
+	|> filter(fn: (r) => r["_field"] == "MeanEnergyConsumption")
+	|> unique()
+	|> yield(name: "unique")"""
+
+	tables = client.query_api().query(query, org=org)
+
+	# Extract the data from the FluxTable objects
+	data = []
+	for table in tables:
+		for record in table.records:
+			data.append((record.get_time(), record.get_value()))
+
+	# Convert the data to a pandas DataFrame
+	df = pd.DataFrame(data, columns=['DateTime', 'MeanEnergyConsumption'])
 	df['DateTime'] = pd.to_datetime(df['DateTime'])
 
 	X_train = df.drop('MeanEnergyConsumption', axis=1)
@@ -259,8 +285,6 @@ def run_TIDE():
 	# Get the values of the prediction
 	prediction_values = prediction.values()
 
-	print(f"Prediction for the next 3 days each hour: {prediction_values}")
-
 	# Get the timestamps of the prediction
 	prediction_timestamps = prediction.time_index
 
@@ -280,7 +304,7 @@ def run_TIDE():
 		
 		# Append the actual value and its timestamp to actual_values
 		actual_values.append((row['timestamp'], row['consumption']))
-		actual_values = actual_values[-168:]
+		actual_values = actual_values
 		
 		# Append the prediction and its timestamp to latest_prediction
 		latest_prediction.append((row['timestamp'] + pd.Timedelta(hours=1), prediction.values()[0]))
