@@ -29,6 +29,52 @@ prediction_length = 1
 error = []
 prev_prediction_length = 0
 
+# Connect to the InfluxDB server
+host = 'http://localhost:8086'
+token = "kDdfNAmJIkm4V-dFQGebl8gIwc7VZu88u3ZEdcwMMcklivQ1ouIS3VOSo6zXLs_rw6owWpKT1NlOmi5EdWqLOA=="
+org = "test"
+bucket = "poggers"
+client = InfluxDBClient(url=host, token=token, org=org)
+# Query the data from your bucket
+query = """from(bucket: "poggers")
+|> range(start: 2011-11-23T09:00:00Z, stop: 2014-02-28T00:00:00Z)
+|> filter(fn: (r) => r["_measurement"] == "measurement")
+|> filter(fn: (r) => r["_field"] == "MeanEnergyConsumption")"""
+
+tables = client.query_api().query(query, org=org)
+
+# Extract the data from the FluxTable objects
+data = []
+for table in tables:
+	for record in table.records:
+		data.append((record.get_time(), record.get_value()))
+
+# Convert the data to a pandas DataFrame
+df = pd.DataFrame(data, columns=['DateTime', 'MeanEnergyConsumption'])
+
+# Query the data from your bucket
+query = """from(bucket: "poggers")
+  |> range(start: 2010-07-01T00:00:00Z, stop: 2013-06-30T23:00:00Z)
+  |> filter(fn: (r) => r["_measurement"] == "Solar")
+  |> filter(fn: (r) => r["_field"] == "consumption" or r["_field"] == "sunshine_duration" or r["_field"] == "cloud_cover")"""
+
+tables = client.query_api().query(query, org=org)
+
+data = {'consumption': [], 'cloud_cover': [], 'sunshine_duration': []}
+for table in tables:
+    for record in table.records:
+        field = record.get_field()
+        if field in data:
+            data[field].append((record.get_time(), record.get_value()))
+
+dfs = {field: pd.DataFrame(values, columns=['timestamp', field]) for field, values in data.items()}
+
+# Convert the data to a pandas DataFrame
+dfT = dfs['consumption']
+for field in ['cloud_cover', 'sunshine_duration']:
+    dfT = dfT.merge(dfs[field], on='timestamp', how='outer')
+dfT['timestamp'] = dfT['timestamp'].dt.tz_convert(None)
+
 def create_graph(dates, values):
 	# Generate your graph
 	graph = go.Figure(
@@ -136,6 +182,7 @@ def run_SNARIMAX():
 	global actual_values
 	global prediction_length
 	global error
+	global df
 	training_running = 1
  
 	# Reset latest_prediction and actual_values
@@ -143,30 +190,6 @@ def run_SNARIMAX():
 	actual_values = []
     
 	print("Running the model training snarimax...")
-	# Connect to the InfluxDB server
-	host = 'http://localhost:8086'
-	token = "kDdfNAmJIkm4V-dFQGebl8gIwc7VZu88u3ZEdcwMMcklivQ1ouIS3VOSo6zXLs_rw6owWpKT1NlOmi5EdWqLOA=="
-	org = "test"
-	bucket = "poggers"
-	client = InfluxDBClient(url=host, token=token, org=org)
-	# Query the data from your bucket
-	query = """from(bucket: "poggers")
-	|> range(start: 2011-11-23T09:00:00Z, stop: 2014-02-28T00:00:00Z)
-	|> filter(fn: (r) => r["_measurement"] == "measurement")
-	|> filter(fn: (r) => r["_field"] == "MeanEnergyConsumption")
-	|> unique()
-	|> yield(name: "unique")"""
-
-	tables = client.query_api().query(query, org=org)
-
-	# Extract the data from the FluxTable objects
-	data = []
-	for table in tables:
-		for record in table.records:
-			data.append((record.get_time(), record.get_value()))
-
-	# Convert the data to a pandas DataFrame
-	df = pd.DataFrame(data, columns=['DateTime', 'MeanEnergyConsumption'])
 	df['DateTime'] = pd.to_datetime(df['DateTime'])
 
 	X_train = df.drop('MeanEnergyConsumption', axis=1)
@@ -203,6 +226,7 @@ def run_Holtwinters():
 	global training_running
 	global latest_prediction
 	global actual_values
+	global df
 	training_running = 2
 	
 	# Reset latest_prediction and actual_values
@@ -210,7 +234,6 @@ def run_Holtwinters():
 	actual_values = []
     
 	print("Running the model training holt...")
-	df = pd.read_csv('merged_data.csv')
 	df['DateTime'] = pd.to_datetime(df['DateTime'])
 	df = df.dropna()
 
@@ -256,6 +279,7 @@ def run_TIDE():
 	global training_running
 	global latest_prediction
 	global actual_values
+	global dfT
 	training_running = 3
 	# Reset latest_prediction and actual_values
 	latest_prediction = []
@@ -266,15 +290,13 @@ def run_TIDE():
 	print(model)
 	if model is None:
 		print("Failed to load the model.")
-	# Load the data from the CSV file
-	df = pd.read_csv('customer_36v2.csv')
 
 	# Convert the 'timestamp' column to datetime if not already done
-	df['timestamp'] = pd.to_datetime(df['timestamp'])
+	dfT['timestamp'] = pd.to_datetime(dfT['timestamp'])
 
 	# Split the dataframe
-	df_train = df[df['timestamp'] < '2011-06-30']
-	df_test = df[df['timestamp'] >= '2011-06-30']
+	df_train = dfT[dfT['timestamp'] < '2011-06-30']
+	df_test = dfT[dfT['timestamp'] >= '2011-06-30']
 
 	# Create a TimeSeries object from the train dataframe
 	series_train = TimeSeries.from_dataframe(df_train, 'timestamp', 'consumption', freq='h', fill_missing_dates=True)
