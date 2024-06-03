@@ -5,3 +5,4 @@ tide
 psutil
 flask
 plotly
+influxdb_client
