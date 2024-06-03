@@ -31,12 +31,12 @@ prev_prediction_length = 0
 
 # Connect to the InfluxDB server
 host = 'http://localhost:8086'
-token = "kDdfNAmJIkm4V-dFQGebl8gIwc7VZu88u3ZEdcwMMcklivQ1ouIS3VOSo6zXLs_rw6owWpKT1NlOmi5EdWqLOA=="
-org = "test"
-bucket = "poggers"
+token = "BKLgxb15c4FA6bE9TOBdyzqdJmD9gVbzJwWEco_el-wXuIdoFhGVs80LBoWbGSG6o5cv6yb4FVQ-BbLK_NmGeg=="
+org = "beheerder"
+bucket = "dataset"
 client = InfluxDBClient(url=host, token=token, org=org)
 # Query the data from your bucket
-query = """from(bucket: "poggers")
+query = """from(bucket: "dataset")
 |> range(start: 2011-11-23T09:00:00Z, stop: 2014-02-28T00:00:00Z)
 |> filter(fn: (r) => r["_measurement"] == "measurement")
 |> filter(fn: (r) => r["_field"] == "MeanEnergyConsumption")"""
@@ -53,7 +53,7 @@ for table in tables:
 df = pd.DataFrame(data, columns=['DateTime', 'MeanEnergyConsumption'])
 
 # Query the data from your bucket
-query = """from(bucket: "poggers")
+query = """from(bucket: "dataset")
   |> range(start: 2010-07-01T00:00:00Z, stop: 2013-06-30T23:00:00Z)
   |> filter(fn: (r) => r["_measurement"] == "Solar")
   |> filter(fn: (r) => r["_field"] == "consumption" or r["_field"] == "sunshine_duration" or r["_field"] == "cloud_cover")"""
