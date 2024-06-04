@@ -31,12 +31,12 @@ prev_prediction_length = 0
 
 # Connect to the InfluxDB server
 host = 'http://localhost:8086'
-token = "BKLgxb15c4FA6bE9TOBdyzqdJmD9gVbzJwWEco_el-wXuIdoFhGVs80LBoWbGSG6o5cv6yb4FVQ-BbLK_NmGeg=="
-org = "beheerder"
+token = "E-de55FVUaU-RiOUJ9jt1wzv1dcToU6QB9QV9RDq0BB2T9B1c8LIg3dLyWeVwWN24bB492fb9Dh_D1xJQkVvmQ=="
+org = "test"
 bucket = "dataset"
 client = InfluxDBClient(url=host, token=token, org=org)
 # Query the data from your bucket
-query = """from(bucket: "dataset")
+query = """from(bucket: "poggers")
 |> range(start: 2011-11-23T09:00:00Z, stop: 2014-02-28T00:00:00Z)
 |> filter(fn: (r) => r["_measurement"] == "measurement")
 |> filter(fn: (r) => r["_field"] == "MeanEnergyConsumption")"""
@@ -53,7 +53,7 @@ for table in tables:
 df = pd.DataFrame(data, columns=['DateTime', 'MeanEnergyConsumption'])
 
 # Query the data from your bucket
-query = """from(bucket: "dataset")
+query = """from(bucket: "poggers")
   |> range(start: 2010-07-01T00:00:00Z, stop: 2013-06-30T23:00:00Z)
   |> filter(fn: (r) => r["_measurement"] == "Solar")
   |> filter(fn: (r) => r["_field"] == "consumption" or r["_field"] == "sunshine_duration" or r["_field"] == "cloud_cover")"""
@@ -122,17 +122,15 @@ def get_latest_prediction():
 	else:
 		actual_date = []
 		actual_value = []
-
 	return jsonify({
 		'prediction_dates': prediction_dates, 
 		'prediction_values': prediction_values,
 		'actual_dates': actual_date, 
-		'actual_values': actual_value,
+		'actual_values': actual_value
 	})
 @app.route('/latest_error', methods=['GET'])
 def get_error():
     global error
-    print(error)
     if not error:
         return jsonify({'error_dates': [], 'error_values': []})
 
@@ -154,22 +152,21 @@ def handle_start_training():
 	# Get the model and prediction_length from the request body
 	data = request.get_json()
 	model_name = data.get('model')
-	prediction_length = int(data.get('prediction_length', 1))	
-
+	prediction_length = int(data.get('prediction_length', 1))
  
-	if model_name == 'SNARIMAX' and training_running != 1 or prev_prediction_length != prediction_length:
+	if model_name == 'SNARIMAX' and (training_running != 1 or prev_prediction_length != prediction_length):
 		training_running = 0
-		time.sleep(0.1)
+		time.sleep(1)
 		Thread(target=run_SNARIMAX).start()
 		prev_prediction_length = prediction_length
-	elif model_name == 'Holtwinters' and training_running != 2 or prev_prediction_length != prediction_length:
+	elif model_name == 'Holtwinters' and (training_running != 2 or prev_prediction_length != prediction_length):
 		training_running = 0
-		time.sleep(0.1)
+		time.sleep(1)
 		Thread(target=run_Holtwinters).start()
 		prev_prediction_length = prediction_length
-	elif model_name == 'TIDE' and training_running != 3 or prev_prediction_length != prediction_length:
+	elif model_name == 'TIDE' and (training_running != 3 or prev_prediction_length != prediction_length):
 		training_running = 0
-		time.sleep(0.1)
+		time.sleep(1)
 		Thread(target=run_TIDE).start()
 		prev_prediction_length = prediction_length
 	else:
@@ -243,7 +240,6 @@ def run_Holtwinters():
 
 	stream = iter(df.itertuples(index=False))
 	stream = iter([(x._asdict(), y) for x, y in zip(df.drop('MeanEnergyConsumption', axis=1).itertuples(index=False), df['MeanEnergyConsumption'])])
-	print(next(stream))
 
 	model = time_series.HoltWinters(
 		alpha=0.3,
@@ -280,6 +276,7 @@ def run_TIDE():
 	global latest_prediction
 	global actual_values
 	global dfT
+	global prediction_length
 	training_running = 3
 	# Reset latest_prediction and actual_values
 	latest_prediction = []
@@ -287,7 +284,6 @@ def run_TIDE():
 	print("Running the model TIDE...")
 	# Load the model from the file
 	model = TiDEModel.load('my_model.pt')
-	print(model)
 	if model is None:
 		print("Failed to load the model.")
 
@@ -301,21 +297,6 @@ def run_TIDE():
 	# Create a TimeSeries object from the train dataframe
 	series_train = TimeSeries.from_dataframe(df_train, 'timestamp', 'consumption', freq='h', fill_missing_dates=True)
 
-	# Predict the next 72 points
-	prediction = model.predict(n=72, series=series_train)
-
-	# Get the values of the prediction
-	prediction_values = prediction.values()
-
-	# Get the timestamps of the prediction
-	prediction_timestamps = prediction.time_index
-
-	# Clip the predicted values at 0
-	prediction_values = np.clip(prediction.values(), 0, None)
-
-	# Create a new TimeSeries object with the clipped values
-	prediction = TimeSeries.from_times_and_values(prediction.time_index, prediction_values)
-
 	# Now, for each new hour in the test set, make a prediction
 	for index, row in df_test.iterrows():
 		# Create a new TimeSeries object for the new data
@@ -324,13 +305,39 @@ def run_TIDE():
 		# Append the new data to the series
 		series_train = series_train.append(new_data)
 		
+		# Now make a prediction with the updated series
+		prediction = model.predict(n=prediction_length, series=series_train)
+  		# Update df_test with the new data
+		df_test = dfT[dfT['timestamp'] >= row['timestamp']]
+
+		# Get the values of the prediction
+		prediction_values = prediction.values()
+		print("Running the model TIDE...")
+		# Get the timestamps of the prediction
+		prediction_timestamps = prediction.time_index
+
+		# Clip the predicted values at 0
+		prediction_values = np.clip(prediction.values(), 0, None)
+
+		# Create a new TimeSeries object with the clipped values
+		prediction = TimeSeries.from_times_and_values(prediction.time_index, prediction_values)
+		i = 0
+		# Create a new TimeSeries object for the new data
+		new_data = TimeSeries.from_times_and_values(pd.date_range(start=row['timestamp'], periods=1, freq='h'), [row['consumption']])
+		
+		# Append the new data to the series
+		series_train = series_train.append(new_data)
+		
 		# Append the actual value and its timestamp to actual_values
 		actual_values.append((row['timestamp'], row['consumption']))
-		actual_values = actual_values
+		actual_values = actual_values[-168:]
 		
 		# Append the prediction and its timestamp to latest_prediction
-		latest_prediction.append((row['timestamp'] + pd.Timedelta(hours=1), prediction.values()[0]))
+		latest_prediction.append((row['timestamp'] + pd.Timedelta(hours=1), float(prediction.values()[i].item())))
 		latest_prediction = latest_prediction[-168:]
+		i += 1
+		if training_running != 3:
+			break
 
 	
 if __name__ == '__main__':
