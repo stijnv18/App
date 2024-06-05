@@ -293,67 +293,73 @@ def run_TIDE():
 	global dfT
 	global prediction_length
 	training_running = 3
+ 
 	# Reset latest_prediction and actual_values
 	latest_prediction = []
 	actual_values = []
+ 
 	print("Running the model TIDE...")
 	# Load the model from the file
 	model = TiDEModel.load('my_model.pt')
 	if model is None:
 		print("Failed to load the model.")
 
-	# Convert the 'timestamp' column to datetime if not already done
-	dfT['timestamp'] = pd.to_datetime(dfT['timestamp'])
-
-	# Split the dataframe
-	df_train = dfT[dfT['timestamp'] < '2011-06-30']
-	df_test = dfT[dfT['timestamp'] >= '2011-06-30']
-
-	# Create a TimeSeries object from the train dataframe
-	series_train = TimeSeries.from_dataframe(df_train, 'timestamp', 'consumption', freq='h', fill_missing_dates=True)
-
-	# Now, for each new hour in the test set, make a prediction
-	for index, row in df_test.iterrows():
-		# Create a new TimeSeries object for the new data
-		new_data = TimeSeries.from_times_and_values(pd.date_range(start=row['timestamp'], periods=1, freq='h'), [row['consumption']])
-		
-		# Append the new data to the series
-		series_train = series_train.append(new_data)
-		
-		# Now make a prediction with the updated series
-		prediction = model.predict(n=prediction_length, series=series_train)
-  		# Update df_test with the new data
-		df_test = dfT[dfT['timestamp'] >= row['timestamp']]
-
-		# Get the values of the prediction
-		prediction_values = prediction.values()
-		print("Running the model TIDE...")
-		# Get the timestamps of the prediction
-		prediction_timestamps = prediction.time_index
-
-		# Clip the predicted values at 0
-		prediction_values = np.clip(prediction.values(), 0, None)
-
-		# Create a new TimeSeries object with the clipped values
-		prediction = TimeSeries.from_times_and_values(prediction.time_index, prediction_values)
-		i = 0
-		# Create a new TimeSeries object for the new data
-		new_data = TimeSeries.from_times_and_values(pd.date_range(start=row['timestamp'], periods=1, freq='h'), [row['consumption']])
-		
-		# Append the new data to the series
-		series_train = series_train.append(new_data)
-		
-		# Append the actual value and its timestamp to actual_values
-		actual_values.append((row['timestamp'], row['consumption']))
-		actual_values = actual_values[-168:]
-		
-		# Append the prediction and its timestamp to latest_prediction
-		latest_prediction.append((row['timestamp'] + pd.Timedelta(hours=1), float(prediction.values()[i].item())))
-		latest_prediction = latest_prediction[-168:]
-		i += 1
-		if training_running != 3:
-			break
-
+	start_time = datetime.strptime("2010-07-01T00:00:00Z", '%Y-%m-%dT%H:%M:%SZ')
+	end_time = datetime.strptime("2013-06-30T23:00:00Z", '%Y-%m-%dT%H:%M:%SZ')
 	
+	current_time = start_time
+	while current_time <= end_time and training_running == 3:
+		stop_time = current_time + timedelta(days=48)
+		start_str = current_time.strftime('%Y-%m-%dT%H:%M:%SZ')
+		stop_str = stop_time.strftime('%Y-%m-%dT%H:%M:%SZ')
+		print(f"Training from {start_str} to {stop_str}")
+		query = f"""from(bucket: "poggers")
+		|> range(start: {start_str}, stop: {stop_str})
+		|> filter(fn: (r) => r["_measurement"] == "Solar")
+		|> filter(fn: (r) => r["_field"] == "consumption" or r["_field"] == "sunshine_duration" or r["_field"] == "cloud_cover")"""
+
+		tables = client.query_api().query(query, org=org)
+		i = 0
+		data = {'consumption': [], 'cloud_cover': [], 'sunshine_duration': []}
+		# Process the data for this month
+		for table in tables:
+			for record in table.records:
+				if training_running != 3:
+					break
+				y = record.get_field()
+				if y in data:
+					data[y].append((record.get_time(), record.get_value()))
+		dfs = {field: pd.DataFrame(values, columns=['timestamp', field]) for field, values in data.items()}
+
+		# Convert the data to a pandas DataFrame
+		dfT = dfs['consumption']
+		for field in ['cloud_cover', 'sunshine_duration']:
+			dfT = dfT.merge(dfs[field], on='timestamp', how='outer')
+		dfT['timestamp'] = dfT['timestamp'].dt.tz_convert(None)
+		# Convert the DataFrame to a TimeSeries
+		dfT.set_index('timestamp', inplace=True)
+		series = TimeSeries.from_dataframe(dfT, fill_missing_dates=True, freq='h')
+		if i > 0:
+			print("test")
+			# Now make a prediction with the updated series
+			prediction = model.predict(n=prediction_length, series=series)
+			# Get the values of the prediction
+			prediction_values = prediction.values()
+			# Get the timestamps of the prediction
+			prediction_timestamps = prediction.time_index
+			# Clip the predicted values at 0
+			prediction_values = np.clip(prediction.values(), 0, None)
+			# Create a new TimeSeries object with the clipped values
+			prediction = TimeSeries.from_times_and_values(prediction.time_index, prediction_values)
+			# Append the actual value and its timestamp to actual_values
+			actual_values.append((time_of_observation, y))
+			actual_values = actual_values[-168:]
+			# Append the prediction and its timestamp to latest_prediction
+			latest_prediction.append((time_of_observation + pd.Timedelta(hours=1), float(prediction.values()[0].item())))
+			latest_prediction = latest_prediction[-168:]
+		i+=1
+		time.sleep(0.1)
+		current_time = stop_time
+	training_running = 0
 if __name__ == '__main__':
 	app.run(host='0.0.0.0', port=8888)
