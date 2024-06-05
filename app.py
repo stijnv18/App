@@ -38,10 +38,9 @@ prev_prediction_length = 0
 dbconnecttime = time.time()
 
 # Connect to the InfluxDB server
-host = 'http://192.168.2.201:8086'
-token = "QaRtTYtoGsLFHzFTMbkx5DbYp9kERjxsVVNJ3oyLYHJRPqOehKsfuf16jhcE6SN-i4pozXIoCKW41gbM9cdiSg=="
-org = "beheerder"
-bucket = "dataset"
+host = 'http://localhost:8086'
+token = "E-de55FVUaU-RiOUJ9jt1wzv1dcToU6QB9QV9RDq0BB2T9B1c8LIg3dLyWeVwWN24bB492fb9Dh_D1xJQkVvmQ=="
+org = "test"
 client = InfluxDBClient(url=host, token=token, org=org)
 dbconnecstop = time.time()
 print("Elapsed time connecting to db: ", dbconnecstop - dbconnecttime)
@@ -172,7 +171,7 @@ def run_SNARIMAX():
 		stop_str = stop_time.strftime('%Y-%m-%dT%H:%M:%SZ')
 		print(f"Training from {start_str} to {stop_str}")
   
-		query = f"""from(bucket: "dataset")
+		query = f"""from(bucket: "poggers")
 		|> range(start: {start_str}, stop: {stop_str})
 		|> filter(fn: (r) => r["_measurement"] == "measurement")
 		|> filter(fn: (r) => r["_field"] == "MeanEnergyConsumption")"""
@@ -232,7 +231,7 @@ def run_Holtwinters():
 		stop_str = stop_time.strftime('%Y-%m-%dT%H:%M:%SZ')
 		print(f"Training from {start_str} to {stop_str}")
 		# Define the query for this month
-		query = f"""from(bucket: "dataset")
+		query = f"""from(bucket: "poggers")
 		|> range(start: {start_str}, stop: {stop_str})
 		|> filter(fn: (r) => r["_measurement"] == "measurement")
 		|> filter(fn: (r) => r["_field"] == "MeanEnergyConsumption")"""	
@@ -289,9 +288,7 @@ def run_TIDE():
 		stop_time = current_time + timedelta(days=48)
 		start_str = current_time.strftime('%Y-%m-%dT%H:%M:%SZ')
 		stop_str = stop_time.strftime('%Y-%m-%dT%H:%M:%SZ')
-  
-		print(f"Training from {start_str} to {stop_str}")
-		query = f"""from(bucket: "dataset")
+		query = f"""from(bucket: "poggers")
 		|> range(start: {start_str}, stop: {stop_str})
 		|> filter(fn: (r) => r["_measurement"] == "Solar")
 		|> filter(fn: (r) => r["_field"] == "consumption")"""
@@ -307,7 +304,6 @@ def run_TIDE():
 					
 				y = record.get_value()
 				time_of_observation = record.get_time()
-				print(f"Observation {time_of_observation}: {y}")
 				data.append((time_of_observation, y))
 				df = pd.DataFrame(data, columns=['timestamp', 'consumption'])	
 				df['timestamp'] = pd.to_datetime(df['timestamp']).dt.tz_convert(None)
@@ -323,10 +319,9 @@ def run_TIDE():
 
 
 					latest_prediction.append((time_of_observation + timedelta(hours=prediction_length), prediction_values[prediction_length-1]))
-
+					latest_prediction = latest_prediction[-prediction_length:]
 					actual_values.append((time_of_observation, y))
 					actual_values = actual_values[-168:]
-					print(actual_values)
 
 				time.sleep(0.1)
 		current_time = stop_time
