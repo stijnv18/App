@@ -14,7 +14,7 @@ error = []
 prev_prediction_length = 0
 
 # Connect to the InfluxDB server
-host = 'http://localhost:8086'
+host = 'http://192.168.2.201:8086'
 token = "QaRtTYtoGsLFHzFTMbkx5DbYp9kERjxsVVNJ3oyLYHJRPqOehKsfuf16jhcE6SN-i4pozXIoCKW41gbM9cdiSg=="
 org = "beheerder"
 bucket = "dataset"
@@ -53,10 +53,14 @@ while current_time <= end_time:
     for table in tables:
         for record in table.records:
             y = record.get_value()
+            time_of_observation = record.get_time()
+            print(f"Observation {time_of_observation}: {y}")
+            #print(type(time_of_observation))
             model_without_exog.learn_one(y)
             if i > 0:  # Skip the first observation
                 forecast = model_without_exog.forecast(horizon=prediction_length)  # forecast 1 step ahead
             i+=1
+            time.sleep(0.1)
 
     # Move to the next month
     current_time = stop_time

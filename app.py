@@ -1,21 +1,20 @@
-from flask import Flask, render_template, jsonify, abort, request
+# Standard library imports
+from datetime import datetime, timedelta
 from threading import Thread
+import json
+import logging
+import time
+
+# Third-party libraries
+from darts import TimeSeries
+from darts.models import TiDEModel
+from flask import Flask, render_template, jsonify, abort, request
+from influxdb_client import InfluxDBClient
+import numpy as np
+import pandas as pd
 import plotly
 import plotly.graph_objs as go
-import json
-import pandas as pd
-from river import time_series
-import time
-from river import metrics
-from datetime import datetime, timedelta
-import logging
-from darts.models import TiDEModel
-from joblib import load
-from darts import TimeSeries
-import numpy as np
-from influxdb_client import InfluxDBClient, Point, Dialect
-from influxdb_client.client.flux_table import FluxTable
-from influxdb_client.client.write_api import SYNCHRONOUS
+from river import metrics, time_series
 
 log = logging.getLogger('werkzeug')
 log.setLevel(logging.ERROR)
@@ -30,13 +29,13 @@ error = []
 prev_prediction_length = 0
 
 # Connect to the InfluxDB server
-host = 'http://localhost:8086'
-token = "E-de55FVUaU-RiOUJ9jt1wzv1dcToU6QB9QV9RDq0BB2T9B1c8LIg3dLyWeVwWN24bB492fb9Dh_D1xJQkVvmQ=="
-org = "test"
+host = 'http://192.168.2.201:8086'
+token = "QaRtTYtoGsLFHzFTMbkx5DbYp9kERjxsVVNJ3oyLYHJRPqOehKsfuf16jhcE6SN-i4pozXIoCKW41gbM9cdiSg=="
+org = "beheerder"
 bucket = "dataset"
 client = InfluxDBClient(url=host, token=token, org=org)
 # Query the data from your bucket
-query = """from(bucket: "poggers")
+query = """from(bucket: "dataset")
 |> range(start: 2011-11-23T09:00:00Z, stop: 2014-02-28T00:00:00Z)
 |> filter(fn: (r) => r["_measurement"] == "measurement")
 |> filter(fn: (r) => r["_field"] == "MeanEnergyConsumption")"""
@@ -53,7 +52,7 @@ for table in tables:
 df = pd.DataFrame(data, columns=['DateTime', 'MeanEnergyConsumption'])
 
 # Query the data from your bucket
-query = """from(bucket: "poggers")
+query = """from(bucket: "dataset")
   |> range(start: 2010-07-01T00:00:00Z, stop: 2013-06-30T23:00:00Z)
   |> filter(fn: (r) => r["_measurement"] == "Solar")
   |> filter(fn: (r) => r["_field"] == "consumption" or r["_field"] == "sunshine_duration" or r["_field"] == "cloud_cover")"""
@@ -187,37 +186,43 @@ def run_SNARIMAX():
 	actual_values = []
     
 	print("Running the model training snarimax...")
-	df['DateTime'] = pd.to_datetime(df['DateTime'])
-
-	X_train = df.drop('MeanEnergyConsumption', axis=1)
-	y_train = df['MeanEnergyConsumption']
-
-	# Get month and day of the week from the date time column
-	X_train['Month'] = X_train['DateTime'].dt.month
-	X_train['DayOfWeek'] = X_train['DateTime'].dt.dayofweek
-
-	# Convert the training set back to DataFrame for the model training
-	train_df = pd.concat([X_train, y_train], axis=1)
+ 
 
 	model_without_exog = (time_series.SNARIMAX(p=1,d=0,q=1,sp=0,sd=1,sq=1,m=24))
- 
-	mae_without_exog = metrics.MAE()
-	for i, (_, row) in enumerate(train_df.iterrows()):
-		y = row['MeanEnergyConsumption']
-		model_without_exog.learn_one(y)
-		if i > 0:  # Skip the first observation
-			forecast = model_without_exog.forecast(horizon=prediction_length)  # forecast 1 step ahead
-			mae_without_exog.update(y, forecast[prediction_length-1])
-			actual_values.append((row['DateTime'], y))
-			actual_values = actual_values[-168:]
-			# Save the latest prediction
-			latest_prediction.append((row['DateTime'] + timedelta(hours=prediction_length), forecast[prediction_length-1]))
-			latest_prediction = latest_prediction[-168-prediction_length:]
-			error.append(mae_without_exog.get())
-		if training_running != 1:
-			break
-		time.sleep(0.1)
-	training_running = 0
+	start_time = datetime.strptime("2011-11-23T09:00:00Z", '%Y-%m-%dT%H:%M:%SZ')
+	end_time = datetime.strptime("2014-02-28T00:00:00Z", '%Y-%m-%dT%H:%M:%SZ')
+	
+	current_time = start_time
+	while current_time <= end_time:
+		stop_time = current_time + timedelta(days=30)
+		start_str = current_time.strftime('%Y-%m-%dT%H:%M:%SZ')
+		stop_str = stop_time.strftime('%Y-%m-%dT%H:%M:%SZ')
+		print(f"Training from {start_str} to {stop_str}")
+  
+		query = f"""from(bucket: "dataset")
+		|> range(start: {start_str}, stop: {stop_str})
+		|> filter(fn: (r) => r["_measurement"] == "measurement")
+		|> filter(fn: (r) => r["_field"] == "MeanEnergyConsumption")"""
+  
+		tables = client.query_api().query(query, org=org)
+		i = 0
+		# Process the data for this month
+		for table in tables:
+			for record in table.records:
+				if training_running != 1:
+					break
+				y = record.get_value()
+				time_of_observation = record.get_time()
+				model_without_exog.learn_one(y)
+				if i > 0:  # Skip the first observation
+					forecast = model_without_exog.forecast(horizon=prediction_length)
+					actual_values.append((time_of_observation, y))
+					actual_values = actual_values[-168:]
+					latest_prediction.append((time_of_observation + timedelta(hours=prediction_length), forecast[prediction_length-1]))
+					latest_prediction = latest_prediction[-168-prediction_length:]
+				i+=1
+				time.sleep(0.1)
+		current_time = stop_time
 
 def run_Holtwinters():
 	global training_running
