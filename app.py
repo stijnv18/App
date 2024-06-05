@@ -34,22 +34,7 @@ token = "QaRtTYtoGsLFHzFTMbkx5DbYp9kERjxsVVNJ3oyLYHJRPqOehKsfuf16jhcE6SN-i4pozXI
 org = "beheerder"
 bucket = "dataset"
 client = InfluxDBClient(url=host, token=token, org=org)
-# Query the data from your bucket
-query = """from(bucket: "dataset")
-|> range(start: 2011-11-23T09:00:00Z, stop: 2014-02-28T00:00:00Z)
-|> filter(fn: (r) => r["_measurement"] == "measurement")
-|> filter(fn: (r) => r["_field"] == "MeanEnergyConsumption")"""
 
-tables = client.query_api().query(query, org=org)
-
-# Extract the data from the FluxTable objects
-data = []
-for table in tables:
-	for record in table.records:
-		data.append((record.get_time(), record.get_value()))
-
-# Convert the data to a pandas DataFrame
-df = pd.DataFrame(data, columns=['DateTime', 'MeanEnergyConsumption'])
 
 # Query the data from your bucket
 query = """from(bucket: "dataset")
@@ -186,14 +171,12 @@ def run_SNARIMAX():
 	actual_values = []
     
 	print("Running the model training snarimax...")
- 
-
 	model_without_exog = (time_series.SNARIMAX(p=1,d=0,q=1,sp=0,sd=1,sq=1,m=24))
 	start_time = datetime.strptime("2011-11-23T09:00:00Z", '%Y-%m-%dT%H:%M:%SZ')
 	end_time = datetime.strptime("2014-02-28T00:00:00Z", '%Y-%m-%dT%H:%M:%SZ')
 	
 	current_time = start_time
-	while current_time <= end_time:
+	while current_time <= end_time and training_running == 1:
 		stop_time = current_time + timedelta(days=30)
 		start_str = current_time.strftime('%Y-%m-%dT%H:%M:%SZ')
 		stop_str = stop_time.strftime('%Y-%m-%dT%H:%M:%SZ')
@@ -223,6 +206,7 @@ def run_SNARIMAX():
 				i+=1
 				time.sleep(0.1)
 		current_time = stop_time
+	training_running = 0
 
 def run_Holtwinters():
 	global training_running
@@ -236,45 +220,50 @@ def run_Holtwinters():
 	actual_values = []
     
 	print("Running the model training holt...")
-	df['DateTime'] = pd.to_datetime(df['DateTime'])
-	df = df.dropna()
 
-	df['day_of_week'] = df['DateTime'].dt.dayofweek
-	df['hour_of_day'] = df['DateTime'].dt.hour
-	df['month'] = df['DateTime'].dt.month
 
-	stream = iter(df.itertuples(index=False))
-	stream = iter([(x._asdict(), y) for x, y in zip(df.drop('MeanEnergyConsumption', axis=1).itertuples(index=False), df['MeanEnergyConsumption'])])
-
-	model = time_series.HoltWinters(
-		alpha=0.3,
-		beta=0.1,
-		gamma=0.5,
-		seasonality=24,
-		multiplicative=True,
-	)
-
+	model = time_series.HoltWinters(alpha=0.3,beta=0.1,gamma=0.5,seasonality=24,multiplicative=True,)
 	metric = metrics.MAE()
-	# Assuming 'df' is your DataFrame and 'MeanEnergyConsumption' is what you want to predict
-	for i, (_, row) in enumerate(df.iterrows()):
-	
-		y = row['MeanEnergyConsumption']
-		model.learn_one(y)
+ 
+	start_time = datetime.strptime("2011-11-23T09:00:00Z", '%Y-%m-%dT%H:%M:%SZ')
+	end_time = datetime.strptime("2014-02-28T00:00:00Z", '%Y-%m-%dT%H:%M:%SZ')
+	current_time = start_time
+ 
+	while current_time <= end_time and training_running == 2:
+		# Define the stop time for this month
+		stop_time = current_time + timedelta(days=30)  # Approximate a month as 30 days
 
-		# Predict the next point only after the model has been trained on 'seasonality' number of data points
-		if i >= model.seasonality:
-			prediction = model.forecast(horizon=prediction_length)
-			actual_values.append((row['DateTime'], y))
-			# Update the metric
-			metric.update(y, prediction[prediction_length-1])
-			# Save the latest prediction
-			latest_prediction.append((row['DateTime'], prediction[prediction_length-1]))
-			actual_values = actual_values[-168:]
-			latest_prediction = latest_prediction[-168-prediction_length:]
+		# Format times as strings
+		start_str = current_time.strftime('%Y-%m-%dT%H:%M:%SZ')
+		stop_str = stop_time.strftime('%Y-%m-%dT%H:%M:%SZ')
+		print(f"Training from {start_str} to {stop_str}")
+		# Define the query for this month
+		query = f"""from(bucket: "dataset")
+		|> range(start: {start_str}, stop: {stop_str})
+		|> filter(fn: (r) => r["_measurement"] == "measurement")
+		|> filter(fn: (r) => r["_field"] == "MeanEnergyConsumption")"""	
+  
+	    # Fetch the data for this month
+		tables = client.query_api().query(query, org=org)
+		i = 0
+		# Process the data for this month
+		for table in tables:
+			for record in table.records:
+				if training_running != 2:
+					break
+				y = record.get_value()
+				time_of_observation = record.get_time()
+				model.learn_one(y)
+				if i >= model.seasonality:
+					prediction = model.forecast(horizon=prediction_length)
+					actual_values.append((time_of_observation, y))
+					latest_prediction.append((time_of_observation, prediction[prediction_length-1]))
+					actual_values = actual_values[-168:]
+					latest_prediction = latest_prediction[-168-prediction_length:]
+				i += 1
+				time.sleep(0.1)
+		current_time = stop_time
 
-			if training_running != 2:
-				break
-			time.sleep(0.1)
 	training_running = 0
 def run_TIDE():
 	global training_running
