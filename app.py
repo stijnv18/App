@@ -1,9 +1,13 @@
 # Standard library imports
+import time
+
+Starttime = time.time()	
+
 from datetime import datetime, timedelta
 from threading import Thread
 import json
 import logging
-import time
+
 
 # Third-party libraries
 from darts import TimeSeries
@@ -15,6 +19,9 @@ import pandas as pd
 import plotly
 import plotly.graph_objs as go
 from river import metrics, time_series
+
+stoptime = time.time()
+print("Elapsed time loading libs: ", stoptime - Starttime)
 
 log = logging.getLogger('werkzeug')
 log.setLevel(logging.ERROR)
@@ -28,13 +35,16 @@ prediction_length = 1
 error = []
 prev_prediction_length = 0
 
+dbconnecttime = time.time()
+
 # Connect to the InfluxDB server
 host = 'http://192.168.2.201:8086'
 token = "QaRtTYtoGsLFHzFTMbkx5DbYp9kERjxsVVNJ3oyLYHJRPqOehKsfuf16jhcE6SN-i4pozXIoCKW41gbM9cdiSg=="
 org = "beheerder"
 bucket = "dataset"
 client = InfluxDBClient(url=host, token=token, org=org)
-
+dbconnecstop = time.time()
+print("Elapsed time connecting to db: ", dbconnecstop - dbconnecttime)
 
 # Query the data from your bucket
 query = """from(bucket: "dataset")
@@ -58,6 +68,9 @@ dfT = dfs['consumption']
 for field in ['cloud_cover', 'sunshine_duration']:
     dfT = dfT.merge(dfs[field], on='timestamp', how='outer')
 dfT['timestamp'] = dfT['timestamp'].dt.tz_convert(None)
+
+requesttime = time.time()
+print("Elapsed time querying data: ", requesttime - dbconnecstop)
 
 def create_graph(dates, values):
 	# Generate your graph
@@ -194,6 +207,7 @@ def run_SNARIMAX():
 			for record in table.records:
 				if training_running != 1:
 					break
+				start_time_sleep = time.time()
 				y = record.get_value()
 				time_of_observation = record.get_time()
 				model_without_exog.learn_one(y)
@@ -204,7 +218,10 @@ def run_SNARIMAX():
 					latest_prediction.append((time_of_observation + timedelta(hours=prediction_length), forecast[prediction_length-1]))
 					latest_prediction = latest_prediction[-168-prediction_length:]
 				i+=1
-				time.sleep(0.1)
+				end_time_sleep = time.time()  # End time of the loop
+				loop_time = end_time_sleep - start_time_sleep  # Time taken by the loop
+				sleep_time = max(0.1 - loop_time, 0)  # Sleep time (100ms - loop time), but not less than 0
+				time.sleep(sleep_time)
 		current_time = stop_time
 	training_running = 0
 
@@ -251,6 +268,7 @@ def run_Holtwinters():
 			for record in table.records:
 				if training_running != 2:
 					break
+				start_time_sleep = time.time()
 				y = record.get_value()
 				time_of_observation = record.get_time()
 				model.learn_one(y)
@@ -261,7 +279,10 @@ def run_Holtwinters():
 					actual_values = actual_values[-168:]
 					latest_prediction = latest_prediction[-168-prediction_length:]
 				i += 1
-				time.sleep(0.1)
+				end_time_sleep = time.time()  # End time of the loop
+				loop_time = end_time_sleep - start_time_sleep  # Time taken by the loop
+				sleep_time = max(0.1 - loop_time, 0)  # Sleep time (100ms - loop time), but not less than 0
+				time.sleep(sleep_time)
 		current_time = stop_time
 
 	training_running = 0
