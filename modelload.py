@@ -24,6 +24,8 @@ df_test = df[df['timestamp'] >= '2011-06-30']
 series_train = TimeSeries.from_dataframe(df_train, 'timestamp', 'consumption', freq='h', fill_missing_dates=True)
 
 # Predict the next 72 points
+
+print(series_train)
 prediction = model.predict(n=72, series=series_train)
 
 # Get the values of the prediction

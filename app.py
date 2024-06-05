@@ -46,29 +46,6 @@ client = InfluxDBClient(url=host, token=token, org=org)
 dbconnecstop = time.time()
 print("Elapsed time connecting to db: ", dbconnecstop - dbconnecttime)
 
-# Query the data from your bucket
-query = """from(bucket: "dataset")
-  |> range(start: 2010-07-01T00:00:00Z, stop: 2013-06-30T23:00:00Z)
-  |> filter(fn: (r) => r["_measurement"] == "Solar")
-  |> filter(fn: (r) => r["_field"] == "consumption" or r["_field"] == "sunshine_duration" or r["_field"] == "cloud_cover")"""
-
-tables = client.query_api().query(query, org=org)
-
-data = {'consumption': [], 'cloud_cover': [], 'sunshine_duration': []}
-for table in tables:
-    for record in table.records:
-        field = record.get_field()
-        if field in data:
-            data[field].append((record.get_time(), record.get_value()))
-
-dfs = {field: pd.DataFrame(values, columns=['timestamp', field]) for field, values in data.items()}
-
-# Convert the data to a pandas DataFrame
-dfT = dfs['consumption']
-for field in ['cloud_cover', 'sunshine_duration']:
-    dfT = dfT.merge(dfs[field], on='timestamp', how='outer')
-dfT['timestamp'] = dfT['timestamp'].dt.tz_convert(None)
-
 requesttime = time.time()
 print("Elapsed time querying data: ", requesttime - dbconnecstop)
 
@@ -306,59 +283,52 @@ def run_TIDE():
 
 	start_time = datetime.strptime("2010-07-01T00:00:00Z", '%Y-%m-%dT%H:%M:%SZ')
 	end_time = datetime.strptime("2013-06-30T23:00:00Z", '%Y-%m-%dT%H:%M:%SZ')
-	
 	current_time = start_time
+ 
 	while current_time <= end_time and training_running == 3:
 		stop_time = current_time + timedelta(days=48)
 		start_str = current_time.strftime('%Y-%m-%dT%H:%M:%SZ')
 		stop_str = stop_time.strftime('%Y-%m-%dT%H:%M:%SZ')
+  
 		print(f"Training from {start_str} to {stop_str}")
-		query = f"""from(bucket: "poggers")
+		query = f"""from(bucket: "dataset")
 		|> range(start: {start_str}, stop: {stop_str})
 		|> filter(fn: (r) => r["_measurement"] == "Solar")
-		|> filter(fn: (r) => r["_field"] == "consumption" or r["_field"] == "sunshine_duration" or r["_field"] == "cloud_cover")"""
+		|> filter(fn: (r) => r["_field"] == "consumption")"""
 
 		tables = client.query_api().query(query, org=org)
-		i = 0
-		data = {'consumption': [], 'cloud_cover': [], 'sunshine_duration': []}
+	
+		data = []
 		# Process the data for this month
 		for table in tables:
 			for record in table.records:
-				if training_running != 3:
+				if training_running != 3: 	
 					break
-				y = record.get_field()
-				if y in data:
-					data[y].append((record.get_time(), record.get_value()))
-		dfs = {field: pd.DataFrame(values, columns=['timestamp', field]) for field, values in data.items()}
+					
+				y = record.get_value()
+				time_of_observation = record.get_time()
+				print(f"Observation {time_of_observation}: {y}")
+				data.append((time_of_observation, y))
+				df = pd.DataFrame(data, columns=['timestamp', 'consumption'])	
+				df['timestamp'] = pd.to_datetime(df['timestamp']).dt.tz_convert(None)
+				
+				series = TimeSeries.from_dataframe(df, 'timestamp','consumption',fill_missing_dates=True, freq='h')
+				if len(series) >= 48:
+					prediction = model.predict(n=prediction_length, series=series)
+					prediction_values = prediction.values()
+					
+					prediction_values = np.clip(prediction.values(), 0, None)
+					prediction_values = np.array(prediction_values).flatten()
+					#prediction = TimeSeries.from_times_and_values(prediction.time_index, prediction_values)
 
-		# Convert the data to a pandas DataFrame
-		dfT = dfs['consumption']
-		for field in ['cloud_cover', 'sunshine_duration']:
-			dfT = dfT.merge(dfs[field], on='timestamp', how='outer')
-		dfT['timestamp'] = dfT['timestamp'].dt.tz_convert(None)
-		# Convert the DataFrame to a TimeSeries
-		dfT.set_index('timestamp', inplace=True)
-		series = TimeSeries.from_dataframe(dfT, fill_missing_dates=True, freq='h')
-		if i > 0:
-			print("test")
-			# Now make a prediction with the updated series
-			prediction = model.predict(n=prediction_length, series=series)
-			# Get the values of the prediction
-			prediction_values = prediction.values()
-			# Get the timestamps of the prediction
-			prediction_timestamps = prediction.time_index
-			# Clip the predicted values at 0
-			prediction_values = np.clip(prediction.values(), 0, None)
-			# Create a new TimeSeries object with the clipped values
-			prediction = TimeSeries.from_times_and_values(prediction.time_index, prediction_values)
-			# Append the actual value and its timestamp to actual_values
-			actual_values.append((time_of_observation, y))
-			actual_values = actual_values[-168:]
-			# Append the prediction and its timestamp to latest_prediction
-			latest_prediction.append((time_of_observation + pd.Timedelta(hours=1), float(prediction.values()[0].item())))
-			latest_prediction = latest_prediction[-168:]
-		i+=1
-		time.sleep(0.1)
+
+					latest_prediction.append((time_of_observation + timedelta(hours=prediction_length), prediction_values[prediction_length-1]))
+
+					actual_values.append((time_of_observation, y))
+					actual_values = actual_values[-168:]
+					print(actual_values)
+
+				time.sleep(0.1)
 		current_time = stop_time
 	training_running = 0
 if __name__ == '__main__':
