@@ -301,7 +301,7 @@ def run_TIDE():
 			for record in table.records:
 				if training_running != 3: 	
 					break
-					
+				start_time_sleep = time.time()
 				y = record.get_value()
 				time_of_observation = record.get_time()
 				data.append((time_of_observation, y))
@@ -322,8 +322,10 @@ def run_TIDE():
 					latest_prediction = latest_prediction[-168-prediction_length:]
 					actual_values.append((time_of_observation, y))
 					actual_values = actual_values[-168:]
-
-				time.sleep(0.1)
+				end_time_sleep = time.time()  # End time of the loop
+				loop_time = end_time_sleep - start_time_sleep  # Time taken by the loop
+				sleep_time = max(0.1 - loop_time, 0)  # Sleep time (100ms - loop time), but not less than 0
+				time.sleep(sleep_time)
 		current_time = stop_time
 	training_running = 0
 if __name__ == '__main__':
