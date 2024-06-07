@@ -3,9 +3,9 @@ import influxdb_client
 from influxdb_client import InfluxDBClient, Point, WritePrecision
 from influxdb_client.client.write_api import SYNCHRONOUS
 
-token = "BKLgxb15c4FA6bE9TOBdyzqdJmD9gVbzJwWEco_el-wXuIdoFhGVs80LBoWbGSG6o5cv6yb4FVQ-BbLK_NmGeg=="
+token = "dCZKOj7i79eiO3WAJVVeYI45uYs3zeoGal5ZrWatWv-2OcQRH2NyVJaY4htPspn6UuZYCzKkdaBYXSAx5PsEEg=="
 org = "beheerder"
-url = "172.24.4.129:8086"
+url = "http://localhost:8086"
 
 write_client = InfluxDBClient(url=url, token=token, org=org)
 write_api = write_client.write_api(write_options=SYNCHRONOUS)

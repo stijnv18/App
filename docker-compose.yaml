@@ -5,12 +5,14 @@ services:
     container_name: homeassistant
     image: "ghcr.io/home-assistant/home-assistant:latest"
     volumes:
-      - /mnt/sdcard/homeassistant/config:/config
+      - ./homeassistant/config:/config
       - /etc/localtime:/etc/localtime:ro
       - /dev:/dev
     restart: unless-stopped
     privileged: true
     network_mode: host
+    ports:
+      - "8123:8123"
   influxdb:
     image: influxdb:latest #arm64v8/influxdb:2.0 
     container_name: influxdb
@@ -22,8 +24,8 @@ services:
     ports:
       - '8086:8086'
     volumes:
-      - /mnt/sdcard/influx/data:/var/lib/influxdb
-      - /mnt/sdcard/influx/config:/etc/influxdb
+      - ./influx/data:/var/lib/influxdb
+      - ./influx/config:/etc/influxdb
   influxdb_cli:
     links:
       - influxdb

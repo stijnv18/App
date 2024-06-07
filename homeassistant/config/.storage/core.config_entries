@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "minor_version": 2,
+  "key": "core.config_entries",
+  "data": {
+    "entries": [
+      {
+        "data": {},
+        "disabled_by": null,
+        "domain": "sun",
+        "entry_id": "8a496b75de45159e1cf67a095e570c3f",
+        "minor_version": 1,
+        "options": {},
+        "pref_disable_new_entities": false,
+        "pref_disable_polling": false,
+        "source": "import",
+        "title": "Sun",
+        "unique_id": null,
+        "version": 1
+      }
+    ]
+  }
+}
