@@ -7,7 +7,8 @@ from datetime import datetime, timedelta
 from threading import Thread
 import json
 import logging
-
+import warnings
+warnings.filterwarnings("ignore", ".*does not have many workers.*")
 
 # Third-party libraries
 from darts import TimeSeries
@@ -26,6 +27,8 @@ print("Elapsed time loading libs: ", stoptime - Starttime)
 log = logging.getLogger('werkzeug')
 log.setLevel(logging.ERROR)
 app = Flask(__name__)
+logging.getLogger("pytorch_lightning.utilities.rank_zero").setLevel(logging.WARNING)
+logging.getLogger("pytorch_lightning.accelerators.cuda").setLevel(logging.WARNING)
 
 # Global variable to store the latest prediction
 latest_prediction = []
@@ -43,6 +46,8 @@ token = "E-de55FVUaU-RiOUJ9jt1wzv1dcToU6QB9QV9RDq0BB2T9B1c8LIg3dLyWeVwWN24bB492f
 org = "test"
 client = InfluxDBClient(url=host, token=token, org=org)
 dbconnecstop = time.time()
+homeass = "http://homeassistant.home:8123/"
+homeass_token = "Bearer" + " " + "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiI2ZjQwMzQwYzQwZjg0ZjQwYjQwZjQwZjQwZjQwZjQwZjQiLCJpYXQiOjE2MjYwNjYwNzYsImV4cCI6MTY1NjYwNjA3Nn0.1Z6"
 print("Elapsed time connecting to db: ", dbconnecstop - dbconnecttime)
 
 requesttime = time.time()
@@ -310,7 +315,7 @@ def run_TIDE():
 				
 				series = TimeSeries.from_dataframe(df, 'timestamp','consumption',fill_missing_dates=True, freq='h')
 				if len(series) >= 48:
-					prediction = model.predict(n=prediction_length, series=series)
+					prediction = model.predict(n=prediction_length, series=series, verbose=False, show_warnings=False)
 					prediction_values = prediction.values()
 					
 					prediction_values = np.clip(prediction.values(), 0, None)
@@ -319,7 +324,7 @@ def run_TIDE():
 
 
 					latest_prediction.append((time_of_observation + timedelta(hours=prediction_length), prediction_values[prediction_length-1]))
-					latest_prediction = latest_prediction[-prediction_length:]
+					latest_prediction = latest_prediction[-prediction_length-168:]
 					actual_values.append((time_of_observation, y))
 					actual_values = actual_values[-168:]
 
