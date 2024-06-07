@@ -41,9 +41,9 @@ prev_prediction_length = 0
 dbconnecttime = time.time()
 
 # Connect to the InfluxDB server
-host = 'http://localhost:8086'
-token = "E-de55FVUaU-RiOUJ9jt1wzv1dcToU6QB9QV9RDq0BB2T9B1c8LIg3dLyWeVwWN24bB492fb9Dh_D1xJQkVvmQ=="
-org = "test"
+host = 'http://172.24.4.130:8086'
+token = "BKLgxb15c4FA6bE9TOBdyzqdJmD9gVbzJwWEco_el-wXuIdoFhGVs80LBoWbGSG6o5cv6yb4FVQ-BbLK_NmGeg=="
+org = "beheerder"
 client = InfluxDBClient(url=host, token=token, org=org)
 dbconnecstop = time.time()
 homeass = "http://homeassistant.home:8123/"
@@ -176,7 +176,7 @@ def run_SNARIMAX():
 		stop_str = stop_time.strftime('%Y-%m-%dT%H:%M:%SZ')
 		print(f"Training from {start_str} to {stop_str}")
   
-		query = f"""from(bucket: "poggers")
+		query = f"""from(bucket: "dataset")
 		|> range(start: {start_str}, stop: {stop_str})
 		|> filter(fn: (r) => r["_measurement"] == "measurement")
 		|> filter(fn: (r) => r["_field"] == "MeanEnergyConsumption")"""
@@ -236,7 +236,7 @@ def run_Holtwinters():
 		stop_str = stop_time.strftime('%Y-%m-%dT%H:%M:%SZ')
 		print(f"Training from {start_str} to {stop_str}")
 		# Define the query for this month
-		query = f"""from(bucket: "poggers")
+		query = f"""from(bucket: "dataset")
 		|> range(start: {start_str}, stop: {stop_str})
 		|> filter(fn: (r) => r["_measurement"] == "measurement")
 		|> filter(fn: (r) => r["_field"] == "MeanEnergyConsumption")"""	
@@ -256,7 +256,7 @@ def run_Holtwinters():
 				if i >= model.seasonality:
 					prediction = model.forecast(horizon=prediction_length)
 					actual_values.append((time_of_observation, y))
-					latest_prediction.append((time_of_observation, prediction[prediction_length-1]))
+					latest_prediction.append((time_of_observation + timedelta(hours=prediction_length), prediction[prediction_length-1]))
 					actual_values = actual_values[-168:]
 					latest_prediction = latest_prediction[-168-prediction_length:]
 				i += 1
@@ -293,7 +293,7 @@ def run_TIDE():
 		stop_time = current_time + timedelta(days=48)
 		start_str = current_time.strftime('%Y-%m-%dT%H:%M:%SZ')
 		stop_str = stop_time.strftime('%Y-%m-%dT%H:%M:%SZ')
-		query = f"""from(bucket: "poggers")
+		query = f"""from(bucket: "dataset")
 		|> range(start: {start_str}, stop: {stop_str})
 		|> filter(fn: (r) => r["_measurement"] == "Solar")
 		|> filter(fn: (r) => r["_field"] == "consumption")"""
@@ -306,7 +306,7 @@ def run_TIDE():
 			for record in table.records:
 				if training_running != 3: 	
 					break
-					
+				start_time_sleep = time.time()
 				y = record.get_value()
 				time_of_observation = record.get_time()
 				data.append((time_of_observation, y))
@@ -327,8 +327,10 @@ def run_TIDE():
 					latest_prediction = latest_prediction[-prediction_length-168:]
 					actual_values.append((time_of_observation, y))
 					actual_values = actual_values[-168:]
-
-				time.sleep(0.1)
+				end_time_sleep = time.time()  # End time of the loop
+				loop_time = end_time_sleep - start_time_sleep  # Time taken by the loop
+				sleep_time = max(0.1 - loop_time, 0)  # Sleep time (100ms - loop time), but not less than 0
+				time.sleep(sleep_time)
 		current_time = stop_time
 	training_running = 0
 if __name__ == '__main__':
