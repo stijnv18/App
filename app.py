@@ -71,7 +71,7 @@ def index():
     # Check if there is a prediction
     if not prediction['prediction_dates'] or not prediction['prediction_values'] or not prediction['actual_dates'] or not prediction['actual_values']:
         # No prediction or actual values available, return a default page
-        return render_template('index2.html', graphJSON='null')
+        return render_template('index.html', graphJSON='null')
 
     # Unpack the dates and values from the prediction
     prediction_dates, prediction_values = prediction["prediction_dates"],prediction["prediction_values"]
