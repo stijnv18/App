@@ -45,6 +45,7 @@ host = 'http://influxdb:8086'
 token = "A8N8FW0T9zLcF5Rx7hwZfAs10ADmNxqQtqi9t3c_L6s59RjeXbcZRXC2nqgb8RgmSBQzwcMJJxS7EenDP3-P1Q=="
 org = "beheerder"
 client = InfluxDBClient(url=host, token=token, org=org)
+
 dbconnecstop = time.time()
 homeass = "http://homeassistant.home:8123/"
 homeass_token = "Bearer" + " " + "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiI2ZjQwMzQwYzQwZjg0ZjQwYjQwZjQwZjQwZjQwZjQwZjQiLCJpYXQiOjE2MjYwNjYwNzYsImV4cCI6MTY1NjYwNjA3Nn0.1Z6"
