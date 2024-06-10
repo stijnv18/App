@@ -65,23 +65,25 @@ def create_graph(dates, values):
 
 @app.route('/')
 def index():
-    # Fetch the latest prediction
-    prediction = get_latest_prediction().get_json()
+	# Fetch the latest prediction
+	prediction = get_latest_prediction().get_json()
 
-    # Check if there is a prediction
-    if not prediction['prediction_dates'] or not prediction['prediction_values'] or not prediction['actual_dates'] or not prediction['actual_values']:
-        # No prediction or actual values available, return a default page
-        return render_template('index.html', graphJSON='null')
+	# Check if there is a prediction
+	if not prediction['prediction_dates'] or not prediction['prediction_values'] or not prediction['actual_dates'] or not prediction['actual_values']:
+		# No prediction or actual values available, return a default page
+		return render_template('index.html', graphJSON='null')
 
-    # Unpack the dates and values from the prediction
-    prediction_dates, prediction_values = prediction["prediction_dates"],prediction["prediction_values"]
-    actual_dates, actual_values = prediction["actual_dates"], prediction["actual_values"]
+	# Unpack the dates and values from the prediction
+	prediction_dates, prediction_values = prediction["prediction_dates"],prediction["prediction_values"]
+	actual_dates, actual_values = prediction["actual_dates"], prediction["actual_values"]
 
-    # Call the function to create the graph
-    graphJSON = create_graph(prediction_dates, prediction_values, actual_dates, actual_values)
+	# Call the function to create the graph
+	prediction_dates.extend(actual_dates)
+	prediction_values.extend(actual_values)
+	graphJSON = create_graph(prediction_dates, prediction_values)
 	
 
-    return render_template('index.html', graphJSON=graphJSON)
+	return render_template('index.html', graphJSON=graphJSON)
 
 @app.route('/latest_prediction', methods=['GET'])
 def get_latest_prediction():
@@ -109,19 +111,19 @@ def get_latest_prediction():
 	})
 @app.route('/latest_error', methods=['GET'])
 def get_error():
-    global error
-    if not error:
-        return jsonify({'error_dates': [], 'error_values': []})
+	global error
+	if not error:
+		return jsonify({'error_dates': [], 'error_values': []})
 
-    if isinstance(error, (list, tuple)) and len(error) > 0 and isinstance(error[0], (list, tuple)):
-        error_dates, error_values = zip(*error)
-    else:
-        # Handle the case where error is not iterable
-        error_dates, error_values = [], []
+	if isinstance(error, (list, tuple)) and len(error) > 0 and isinstance(error[0], (list, tuple)):
+		error_dates, error_values = zip(*error)
+	else:
+		# Handle the case where error is not iterable
+		error_dates, error_values = [], []
 
-    error_dates = [date.isoformat() for date in error_dates]
+	error_dates = [date.isoformat() for date in error_dates]
 
-    return jsonify({'error_dates': error_dates, 'error_values': error_values})
+	return jsonify({'error_dates': error_dates, 'error_values': error_values})
 
 @app.route('/start_training', methods=['POST'])
 def handle_start_training():
@@ -164,7 +166,7 @@ def run_SNARIMAX():
 	# Reset latest_prediction and actual_values
 	latest_prediction = []
 	actual_values = []
-    
+	
 	print("Running the model training snarimax...")
 	model_without_exog = (time_series.SNARIMAX(p=1,d=0,q=1,sp=0,sd=1,sq=1,m=24))
 	start_time = datetime.strptime("2011-11-23T09:00:00Z", '%Y-%m-%dT%H:%M:%SZ')
@@ -217,7 +219,7 @@ def run_Holtwinters():
 	# Reset latest_prediction and actual_values
 	latest_prediction = []
 	actual_values = []
-    
+	
 	print("Running the model training holt...")
 
 
@@ -242,7 +244,7 @@ def run_Holtwinters():
 		|> filter(fn: (r) => r["_measurement"] == "measurement")
 		|> filter(fn: (r) => r["_field"] == "MeanEnergyConsumption")"""	
   
-	    # Fetch the data for this month
+		# Fetch the data for this month
 		tables = client.query_api().query(query, org=org)
 		i = 0
 		# Process the data for this month

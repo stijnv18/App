@@ -4,12 +4,12 @@ if (graphs) {
 
 const training_url = "/start_training";
 
-const btn_start_model_snarimax = document.querySelector("#start-SNARIMAX-model-button");
-const btn_start_model_holt = document.querySelector("#start-holt-model-button");
-const btn_start_model_tide = document.querySelector("#start-TIDE-model-button");
+const eBtn_start_model_snarimax = document.querySelector("#start_model_snarimax");
+const eBtn_start_model_holt = document.querySelector("#start_model_holt");
+const eBtn_start_model_tide = document.querySelector("#start_model_tide");
 
 const startModel = (url, model) => {
-	const predictionLength = document.getElementById("prediction-length").value;
+	const predictionLength = document.querySelector("#prediction_length").value;
 	Plotly.newPlot("graph", [], {}); // Clear the existing graph
 	fetch(url, {
 		method: "POST",
@@ -66,6 +66,6 @@ const startModel = (url, model) => {
 	}, 1000);
 };
 
-btn_start_model_snarimax.addEventListener("click", () => startModel(training_url, "SNARIMAX"));
-btn_start_model_holt.addEventListener("click", () => startModel(training_url, "Holtwinters"));
-btn_start_model_tide.addEventListener("click", () => startModel(training_url, "TIDE"));
+eBtn_start_model_snarimax.addEventListener("click", () => startModel(training_url, "SNARIMAX"));
+eBtn_start_model_holt.addEventListener("click", () => startModel(training_url, "Holtwinters"));
+eBtn_start_model_tide.addEventListener("click", () => startModel(training_url, "TIDE"));

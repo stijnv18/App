@@ -1,17 +1,23 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Graph</title>
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Graph</title>
+	<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 	<link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-    <div id="graph"></div>
-    <button id="start-SNARIMAX-model-button">Start snarimax model</button>
-    <button id="start-holt-model-button">Start holt Model</button>
-	<button id="start-TIDE-model-button">Start TIDE Model</button>
-	<input id="prediction-length" type="number" min="1" value="168">
-    <script>const graphs = {{ graphJSON | safe }};</script>
+	<div id="graph"></div>
+
+	<div class="controls">
+		<button id="start_model_snarimax">Start Snarimax Model</button>
+		<button id="start_model_holt">Start Holt Model</button>
+		<button id="start_model_tide">Start Tide Model</button>
+		<input id="prediction_length" type="number" min="1" value="168">
+	</div>
+
+	<script>const graphs = {{ graphJSON | safe }};</script>
 	<script src="/static/main.js"></script>
-</body>
+  </body>
 </html>
