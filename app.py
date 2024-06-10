@@ -57,7 +57,14 @@ print("Elapsed time querying data: ", requesttime - dbconnecstop)
 def create_graph(dates, values):
 	# Generate your graph
 	graph = go.Figure(
-		data=[go.Scatter(x=dates, y=values)]
+		data=[go.Scatter(x=dates, y=values)],
+		layout={
+			"paper_bgcolor": "#161616",
+			"plot_bgcolor": "#161616",
+			"font": {
+				"color": "#ffffff"
+			}
+		}
 	)
 	# Convert the figures to JSON
 	graphJSON = json.dumps(graph, cls=plotly.utils.PlotlyJSONEncoder)
@@ -71,7 +78,7 @@ def index():
 	# Check if there is a prediction
 	if not prediction['prediction_dates'] or not prediction['prediction_values'] or not prediction['actual_dates'] or not prediction['actual_values']:
 		# No prediction or actual values available, return a default page
-		return render_template('index.html', graphJSON='null')
+		return render_template('index.html', graphJSON=create_graph([], []))
 
 	# Unpack the dates and values from the prediction
 	prediction_dates, prediction_values = prediction["prediction_dates"],prediction["prediction_values"]
@@ -337,4 +344,4 @@ def run_TIDE():
 		current_time = stop_time
 	training_running = 0
 if __name__ == '__main__':
-	app.run(host='0.0.0.0', port=8888)
+	app.run(host='0.0.0.0', port=8888, debug=True)

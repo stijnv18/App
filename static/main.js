@@ -10,7 +10,7 @@ const eBtn_start_model_tide = document.querySelector("#start_model_tide");
 
 const startModel = (url, model) => {
 	const predictionLength = document.querySelector("#prediction_length").value;
-	Plotly.newPlot("graph", [], {}); // Clear the existing graph
+	Plotly.newPlot("graph", [], graphs.layout); // Clear the existing graph
 	fetch(url, {
 		method: "POST",
 		headers: {
