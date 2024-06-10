@@ -24,8 +24,8 @@ services:
     ports:
       - '8086:8086'
     volumes:
-      - ./influx/data:/var/lib/influxdb
-      - ./influx/config:/etc/influxdb
+      - ./influx/data:/var/lib/influxdb2
+      - ./influx/config:/etc/influxdb2
   influxdb_cli:
     links:
       - influxdb
