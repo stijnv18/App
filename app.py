@@ -41,8 +41,8 @@ prev_prediction_length = 0
 dbconnecttime = time.time()
 
 # Connect to the InfluxDB server
-host = 'http://172.24.4.130:8086'
-token = "BKLgxb15c4FA6bE9TOBdyzqdJmD9gVbzJwWEco_el-wXuIdoFhGVs80LBoWbGSG6o5cv6yb4FVQ-BbLK_NmGeg=="
+host = 'http://influxdb:8086'
+token = "A8N8FW0T9zLcF5Rx7hwZfAs10ADmNxqQtqi9t3c_L6s59RjeXbcZRXC2nqgb8RgmSBQzwcMJJxS7EenDP3-P1Q=="
 org = "beheerder"
 client = InfluxDBClient(url=host, token=token, org=org)
 dbconnecstop = time.time()

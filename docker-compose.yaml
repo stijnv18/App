@@ -10,13 +10,16 @@ services:
       - /dev:/dev
     restart: unless-stopped
     privileged: true
-    network_mode: host
+    networks:
+      - app
     ports:
       - "8123:8123"
   influxdb:
     image: influxdb:latest #arm64v8/influxdb:2.0 
     container_name: influxdb
     restart: always
+    networks:
+      - app
     environment:
       - INFLUXDB_DB=influx
       - INFLUXDB_ADMIN_USER=admin
@@ -49,9 +52,14 @@ services:
     build: 
       context: .
       dockerfile: Dockerfile
+    networks:
+      - app
     volumes:
       - .:/app
     ports:
       - '8888:8888'
     depends_on:
       - influxdb
+
+networks:
+  app:
