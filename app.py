@@ -20,6 +20,7 @@ import pandas as pd
 import plotly
 import plotly.graph_objs as go
 from river import metrics, time_series
+from homeassistant_api import Client,State
 
 stoptime = time.time()
 print("Elapsed time loading libs: ", stoptime - Starttime)
@@ -39,6 +40,10 @@ error = []
 prev_prediction_length = 0
 
 dbconnecttime = time.time()
+
+homeass = "http://homeassistant:8123/api/"
+homeass_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiIzODM2ODY2OWNhNTQ0MGRlODk5ODA5NGJjZmJiMjMyNiIsImlhdCI6MTcxODA5NjQ2OSwiZXhwIjoyMDMzNDU2NDY5fQ.V_3CZP7ZcR5eHNHAJmUOJlh-9wOQoF8ZzXxmSd5Mz_8"
+client_homeass = Client(homeass, homeass_token)
 
 # Connect to the InfluxDB server
 host = 'http://influxdb:8086'
@@ -322,7 +327,10 @@ def run_TIDE():
 					prediction_values = np.clip(prediction.values(), 0, None)
 					prediction_values = np.array(prediction_values).flatten()
 					#prediction = TimeSeries.from_times_and_values(prediction.time_index, prediction_values)
-
+					if prediction_values[0] > 0.2:
+						new_state = client_homeass.set_state(State(entity_id='input_boolean.test_switch', state='on'))
+					else:
+						new_state = client_homeass.set_state(State(entity_id='input_boolean.test_switch', state='off'))
 
 					latest_prediction.append((time_of_observation + timedelta(hours=prediction_length), prediction_values[prediction_length-1]))
 					latest_prediction = latest_prediction[-prediction_length-168:]

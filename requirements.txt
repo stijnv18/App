@@ -6,3 +6,4 @@ psutil
 flask
 plotly
 influxdb_client
+homeassistant_api

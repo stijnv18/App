@@ -103,6 +103,23 @@
         "expire_at": null,
         "credential_id": null,
         "version": "2024.6.1"
+      },
+      {
+        "id": "b2598a56e66f44c1914dad65bd5ab576",
+        "user_id": "7f0977d0e4a44eb29afa233e0a189cb8",
+        "client_id": "http://localhost:8123/",
+        "client_name": null,
+        "client_icon": null,
+        "token_type": "normal",
+        "created_at": "2024-06-11T09:03:35.192288+00:00",
+        "access_token_expiration": 1800.0,
+        "token": "30f3dbb38bd90c2c0a273806317106a1c7bbf3344c1a84afea08438a3d18560d9834dbc2d2f94aa33fa64db99ef46ef3e6e12c8c73548bb3d6da8c80af72f5b7",
+        "jwt_key": "8ab620cdae971e6ce2fc2129f5903a040f29a2b45bfb5d3d9f8ea7c65b4d97b35f353effeddc6defbb8903495feba94a3466ba9c1caa5cc9df627b1cacd02fde",
+        "last_used_at": "2024-06-11T12:20:57.787423+00:00",
+        "last_used_ip": "172.19.0.1",
+        "expire_at": 1725884457.787423,
+        "credential_id": "fce10c14e9ab43058a9e56d9880624d3",
+        "version": "2024.6.1"
       }
     ]
   }
