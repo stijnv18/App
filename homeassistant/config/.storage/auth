@@ -14,6 +14,17 @@
         "name": "Home Assistant Content",
         "system_generated": true,
         "local_only": false
+      },
+      {
+        "id": "7f0977d0e4a44eb29afa233e0a189cb8",
+        "group_ids": [
+          "system-admin"
+        ],
+        "is_owner": true,
+        "is_active": true,
+        "name": "admin",
+        "system_generated": false,
+        "local_only": false
       }
     ],
     "groups": [
@@ -30,7 +41,17 @@
         "name": "Read Only"
       }
     ],
-    "credentials": [],
+    "credentials": [
+      {
+        "id": "fce10c14e9ab43058a9e56d9880624d3",
+        "user_id": "7f0977d0e4a44eb29afa233e0a189cb8",
+        "auth_provider_type": "homeassistant",
+        "auth_provider_id": null,
+        "data": {
+          "username": "admin"
+        }
+      }
+    ],
     "refresh_tokens": [
       {
         "id": "9d65aa35ae984fd394954d8d91346585",
@@ -48,6 +69,40 @@
         "expire_at": null,
         "credential_id": null,
         "version": "2024.6.0"
+      },
+      {
+        "id": "4d6dc2f91d31427e9177d674daa32d75",
+        "user_id": "7f0977d0e4a44eb29afa233e0a189cb8",
+        "client_id": "http://localhost:8123/",
+        "client_name": null,
+        "client_icon": null,
+        "token_type": "normal",
+        "created_at": "2024-06-11T08:51:35.526197+00:00",
+        "access_token_expiration": 1800.0,
+        "token": "77dcac90afad0c7422fcb2bcc7942100ce49e1fc649e15e79d69e37ba034b158b5aed11ea51d3cf6c3a87c2c5c596658108b0cf7807fd7f6a9d0c44397586a05",
+        "jwt_key": "62fbd59b5a1f53a205ca89c2d68806608f3abf9d430a85ac48703c237edf81d7f3ae437142f269a2589711bb500a90924fd4df706ac93ede32c098f10d912443",
+        "last_used_at": "2024-06-11T08:51:35.526252+00:00",
+        "last_used_ip": "172.19.0.1",
+        "expire_at": 1725871895.526252,
+        "credential_id": "fce10c14e9ab43058a9e56d9880624d3",
+        "version": "2024.6.1"
+      },
+      {
+        "id": "38368669ca5440de8998094bcfbb2326",
+        "user_id": "7f0977d0e4a44eb29afa233e0a189cb8",
+        "client_id": null,
+        "client_name": "Admin token",
+        "client_icon": null,
+        "token_type": "long_lived_access_token",
+        "created_at": "2024-06-11T09:01:09.574013+00:00",
+        "access_token_expiration": 315360000.0,
+        "token": "1d0b984ed247408110fa0379a0c444708069365e54bef32f49301a2ac0fa2bdb559d8e36f0fc811443b45b5be7a3461b0d3d779b466592977b50cac7cd3357db",
+        "jwt_key": "b7db651583163c634a186b82477bb718c31aa62774456dae1951e1ac8ce48182370013ced2f21946fad8a2b63ee03de256c691c3658edf4a5d8b2fc874e8e528",
+        "last_used_at": "2024-06-11T09:01:09.574060+00:00",
+        "last_used_ip": null,
+        "expire_at": null,
+        "credential_id": null,
+        "version": "2024.6.1"
       }
     ]
   }
