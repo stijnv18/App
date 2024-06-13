@@ -20,6 +20,7 @@ import pandas as pd
 import plotly
 import plotly.graph_objs as go
 from river import metrics, time_series
+from pandas import Timestamp
 from homeassistant_api import Client,State
 
 stoptime = time.time()
@@ -42,11 +43,13 @@ prev_prediction_length = 0
 dbconnecttime = time.time()
 
 homeass = "http://homeassistant:8123/api/"
+homeass = "http://localhost:8123/api/"
 homeass_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiIzODM2ODY2OWNhNTQ0MGRlODk5ODA5NGJjZmJiMjMyNiIsImlhdCI6MTcxODA5NjQ2OSwiZXhwIjoyMDMzNDU2NDY5fQ.V_3CZP7ZcR5eHNHAJmUOJlh-9wOQoF8ZzXxmSd5Mz_8"
 client_homeass = Client(homeass, homeass_token)
 
 # Connect to the InfluxDB server
 host = 'http://influxdb:8086'
+host =  'http://localhost:8086'
 token = "A8N8FW0T9zLcF5Rx7hwZfAs10ADmNxqQtqi9t3c_L6s59RjeXbcZRXC2nqgb8RgmSBQzwcMJJxS7EenDP3-P1Q=="
 org = "beheerder"
 client = InfluxDBClient(url=host, token=token, org=org)
@@ -326,16 +329,43 @@ def run_TIDE():
 					
 					prediction_values = np.clip(prediction.values(), 0, None)
 					prediction_values = np.array(prediction_values).flatten()
-					#prediction = TimeSeries.from_times_and_values(prediction.time_index, prediction_values)
-					if prediction_values[0] > 0.2:
-						new_state = client_homeass.set_state(State(entity_id='input_boolean.test_switch', state='on'))
-					else:
-						new_state = client_homeass.set_state(State(entity_id='input_boolean.test_switch', state='off'))
-
 					latest_prediction.append((time_of_observation + timedelta(hours=prediction_length), prediction_values[prediction_length-1]))
 					latest_prediction = latest_prediction[-prediction_length-168:]
 					actual_values.append((time_of_observation, y))
 					actual_values = actual_values[-168:]
+					#prediction = TimeSeries.from_times_and_values(prediction.time_index, prediction_values)
+					#Get all prediction times and values
+
+					#Get the latest acutal time and value
+					actual_time_limit = series.time_index[-1]
+
+
+					latest_prediction_limit = [Timestamp(item[0]) for item in latest_prediction]
+					latest_prediction_limit = [item.tz_localize(None) for item in latest_prediction_limit]
+
+		
+
+					print(actual_time_limit in latest_prediction_limit)
+					if len(latest_prediction) >0:
+
+						if len(latest_prediction) > prediction_length:
+							print(latest_prediction[-prediction_length:][0][1])		
+
+						if len(latest_prediction) > prediction_length + 1 and latest_prediction[-prediction_length:][0][1] > 1 and (actual_time_limit in latest_prediction_limit):
+	
+							print("Switching on the light")	
+							try:
+								new_state = client_homeass.set_state(State(entity_id='input_boolean.test_switch', state='on'))
+							except:
+								print("no homeassistant connection")
+						else:
+							#print("Switching off the light")
+							try:
+								new_state = client_homeass.set_state(State(entity_id='input_boolean.test_switch', state='off'))
+							except:
+								print("no homeassistant connection")
+
+
 				end_time_sleep = time.time()  # End time of the loop
 				loop_time = end_time_sleep - start_time_sleep  # Time taken by the loop
 				sleep_time = max(0.1 - loop_time, 0)  # Sleep time (100ms - loop time), but not less than 0

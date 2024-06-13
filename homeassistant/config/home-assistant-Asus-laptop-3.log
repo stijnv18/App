@@ -1,0 +1,82 @@
+2024-06-13 11:24:22.605 WARNING (Recorder) [homeassistant.components.recorder.util] The system could not validate that the sqlite3 database at //config/home-assistant_v2.db was shutdown cleanly
+2024-06-13 11:24:22.726 WARNING (Recorder) [homeassistant.components.recorder.util] Ended unfinished session (id=31 from 2024-06-13 09:37:11.902632)
+2024-06-13 11:24:24.869 ERROR (Recorder) [homeassistant.components.recorder.core] Unrecoverable sqlite3 database corruption detected: (sqlite3.DatabaseError) database disk image is malformed
+[SQL: INSERT INTO states (entity_id, state, attributes, event_id, last_changed, last_changed_ts, last_reported_ts, last_updated, last_updated_ts, old_state_id, attributes_id, context_id, context_user_id, context_parent_id, origin_idx, context_id_bin, context_user_id_bin, context_parent_id_bin, metadata_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING state_id]
+[parameters: (None, '0', None, None, None, None, None, None, 1718277863.672314, None, 11, None, None, None, 0, <memory at 0x7f3add146e00>, None, None, 1)]
+(Background on this error at: https://sqlalche.me/e/20/4xp6)
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 2116, in _exec_insertmany_context
+    dialect.do_execute(
+  File "/usr/local/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 924, in do_execute
+    cursor.execute(statement, parameters)
+sqlite3.DatabaseError: database disk image is malformed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/usr/src/homeassistant/homeassistant/components/recorder/core.py", line 925, in _process_one_task_or_event_or_recover
+    self._commit_event_session_or_retry()
+  File "/usr/src/homeassistant/homeassistant/components/recorder/core.py", line 1191, in _commit_event_session_or_retry
+    self._commit_event_session()
+  File "/usr/src/homeassistant/homeassistant/components/recorder/core.py", line 1227, in _commit_event_session
+    session.commit()
+  File "/usr/local/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 2017, in commit
+    trans.commit(_to_root=True)
+  File "<string>", line 2, in commit
+  File "/usr/local/lib/python3.12/site-packages/sqlalchemy/orm/state_changes.py", line 139, in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 1302, in commit
+    self._prepare_impl()
+  File "<string>", line 2, in _prepare_impl
+  File "/usr/local/lib/python3.12/site-packages/sqlalchemy/orm/state_changes.py", line 139, in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 1277, in _prepare_impl
+    self.session.flush()
+  File "/usr/local/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 4341, in flush
+    self._flush(objects)
+  File "/usr/local/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 4476, in _flush
+    with util.safe_reraise():
+  File "/usr/local/lib/python3.12/site-packages/sqlalchemy/util/langhelpers.py", line 146, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "/usr/local/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 4437, in _flush
+    flush_context.execute()
+  File "/usr/local/lib/python3.12/site-packages/sqlalchemy/orm/unitofwork.py", line 466, in execute
+    rec.execute(self)
+  File "/usr/local/lib/python3.12/site-packages/sqlalchemy/orm/unitofwork.py", line 642, in execute
+    util.preloaded.orm_persistence.save_obj(
+  File "/usr/local/lib/python3.12/site-packages/sqlalchemy/orm/persistence.py", line 93, in save_obj
+    _emit_insert_statements(
+  File "/usr/local/lib/python3.12/site-packages/sqlalchemy/orm/persistence.py", line 1143, in _emit_insert_statements
+    result = connection.execute(
+             ^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1418, in execute
+    return meth(
+           ^^^^^
+  File "/usr/local/lib/python3.12/site-packages/sqlalchemy/sql/elements.py", line 515, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1640, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1844, in _execute_context
+    return self._exec_insertmany_context(dialect, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 2124, in _exec_insertmany_context
+    self._handle_dbapi_exception(
+  File "/usr/local/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 2353, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/usr/local/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 2116, in _exec_insertmany_context
+    dialect.do_execute(
+  File "/usr/local/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 924, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.DatabaseError: (sqlite3.DatabaseError) database disk image is malformed
+[SQL: INSERT INTO states (entity_id, state, attributes, event_id, last_changed, last_changed_ts, last_reported_ts, last_updated, last_updated_ts, old_state_id, attributes_id, context_id, context_user_id, context_parent_id, origin_idx, context_id_bin, context_user_id_bin, context_parent_id_bin, metadata_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING state_id]
+[parameters: (None, '0', None, None, None, None, None, None, 1718277863.672314, None, 11, None, None, None, 0, <memory at 0x7f3add146e00>, None, None, 1)]
+(Background on this error at: https://sqlalche.me/e/20/4xp6)
+2024-06-13 11:24:24.928 ERROR (Recorder) [homeassistant.components.recorder.util] The system will rename the corrupt database file //config/home-assistant_v2.db to //config/home-assistant_v2.db.corrupt.2024-06-13T11:24:24.928186+00:00 in order to allow startup to proceed
+2024-06-13 11:24:25.397 WARNING (MainThread) [homeassistant.components.http.ban] Login attempt or request with invalid authentication from 172.20.0.1 (172.20.0.1). Requested URL: '/auth/token'. (Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:126.0) Gecko/20100101 Firefox/126.0)
+2024-06-13 11:25:20.628 WARNING (MainThread) [homeassistant.components.http.ban] Login attempt or request with invalid authentication from 172.20.0.1 (172.20.0.1). Requested URL: '/auth/token'. (Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:126.0) Gecko/20100101 Firefox/126.0)
+2024-06-13 11:25:21.886 WARNING (MainThread) [homeassistant.components.http.ban] Login attempt or request with invalid authentication from 172.20.0.1 (172.20.0.1). Requested URL: '/auth/token'. (Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:126.0) Gecko/20100101 Firefox/126.0)
+2024-06-13 11:25:22.908 WARNING (MainThread) [homeassistant.components.http.ban] Login attempt or request with invalid authentication from 172.20.0.1 (172.20.0.1). Requested URL: '/api/websocket'. (Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:126.0) Gecko/20100101 Firefox/126.0)

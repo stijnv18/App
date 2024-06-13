@@ -1,0 +1,84 @@
+{
+  "version": 1,
+  "minor_version": 2,
+  "key": "core.config_entries",
+  "data": {
+    "entries": [
+      {
+        "data": {},
+        "disabled_by": null,
+        "domain": "sun",
+        "entry_id": "8a496b75de45159e1cf67a095e570c3f",
+        "minor_version": 1,
+        "options": {},
+        "pref_disable_new_entities": false,
+        "pref_disable_polling": false,
+        "source": "import",
+        "title": "Sun",
+        "unique_id": null,
+        "version": 1
+      },
+      {
+        "data": {},
+        "disabled_by": null,
+        "domain": "shopping_list",
+        "entry_id": "c8d34eea8c5c94dc74e449b79e5c2fa0",
+        "minor_version": 1,
+        "options": {},
+        "pref_disable_new_entities": false,
+        "pref_disable_polling": false,
+        "source": "onboarding",
+        "title": "Shopping list",
+        "unique_id": "shopping_list",
+        "version": 1
+      },
+      {
+        "data": {
+          "language": "en",
+          "tld": "com"
+        },
+        "disabled_by": null,
+        "domain": "google_translate",
+        "entry_id": "ecd42adf6f1b26179d4b5263845927a2",
+        "minor_version": 1,
+        "options": {},
+        "pref_disable_new_entities": false,
+        "pref_disable_polling": false,
+        "source": "onboarding",
+        "title": "Google Translate text-to-speech",
+        "unique_id": null,
+        "version": 1
+      },
+      {
+        "data": {},
+        "disabled_by": null,
+        "domain": "radio_browser",
+        "entry_id": "f711f85087550680332a51bb5d37e91b",
+        "minor_version": 1,
+        "options": {},
+        "pref_disable_new_entities": false,
+        "pref_disable_polling": false,
+        "source": "onboarding",
+        "title": "Radio Browser",
+        "unique_id": null,
+        "version": 1
+      },
+      {
+        "data": {
+          "track_home": true
+        },
+        "disabled_by": null,
+        "domain": "met",
+        "entry_id": "86a79a5614ea74767460f48411235134",
+        "minor_version": 1,
+        "options": {},
+        "pref_disable_new_entities": false,
+        "pref_disable_polling": false,
+        "source": "onboarding",
+        "title": "Home",
+        "unique_id": null,
+        "version": 1
+      }
+    ]
+  }
+}
