@@ -43,13 +43,13 @@ prev_prediction_length = 0
 dbconnecttime = time.time()
 
 homeass = "http://homeassistant:8123/api/"
-homeass = "http://localhost:8123/api/"
+
 homeass_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiIzODM2ODY2OWNhNTQ0MGRlODk5ODA5NGJjZmJiMjMyNiIsImlhdCI6MTcxODA5NjQ2OSwiZXhwIjoyMDMzNDU2NDY5fQ.V_3CZP7ZcR5eHNHAJmUOJlh-9wOQoF8ZzXxmSd5Mz_8"
 client_homeass = Client(homeass, homeass_token)
 
 # Connect to the InfluxDB server
 host = 'http://influxdb:8086'
-host =  'http://localhost:8086'
+
 token = "A8N8FW0T9zLcF5Rx7hwZfAs10ADmNxqQtqi9t3c_L6s59RjeXbcZRXC2nqgb8RgmSBQzwcMJJxS7EenDP3-P1Q=="
 org = "beheerder"
 client = InfluxDBClient(url=host, token=token, org=org)
