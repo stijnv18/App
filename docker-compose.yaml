@@ -5,23 +5,30 @@ services:
     container_name: homeassistant
     image: "ghcr.io/home-assistant/home-assistant:latest"
     volumes:
-      - ./homeassistant/config:/config
+      - /var/lib/docker/data/homeassistant/config:/config
       - /etc/localtime:/etc/localtime:ro
       - /dev:/dev
     restart: unless-stopped
     privileged: true
-    networks:
-      - app
+    network_mode: host
+  node-red:
+    image: nodered/node-red:latest
+    container_name: node-red
+    restart: always
+    environment:
+      - TZ=Europe/London
     ports:
-      - "8123:8123"
-    depends_on:
-      - python_app
+      - "1880:1880"
+      - "502:502"
+      - "11502:11502"
+    volumes:
+      - /var/lib/docker/data/nod-red:/data
+      - /dev:/dev 
+    privileged: true 
   influxdb:
     image: influxdb:latest #arm64v8/influxdb:2.0 
     container_name: influxdb
     restart: always
-    networks:
-      - app
     environment:
       - INFLUXDB_DB=influx
       - INFLUXDB_ADMIN_USER=admin
@@ -29,15 +36,14 @@ services:
     ports:
       - '8086:8086'
     volumes:
-      - ./influx/data:/var/lib/influxdb2
-      - ./influx/config:/etc/influxdb2
+      - /var/lib/docker/data/influxdata:/var/lib/influxdb
   influxdb_cli:
     links:
       - influxdb
     image: influxdb:latest
     volumes:
       # Mount for influxdb data directory and configuration
-      - /mnt/sdcard/influx/data
+      - /var/lib/docker/data/influxdb
     environment: 
        # Use these same configurations parameters in your telegraf configuration, mytelegraf.conf.
       - DOCKER_INFLUXDB_INIT_MODE=setup
@@ -50,12 +56,42 @@ services:
     restart: on-failure:10
     depends_on:
       - influxdb
+  grafana:
+    image: grafana/grafana
+    user: "0" 
+    container_name: grafana-server
+    restart: always
+    depends_on:
+      - influxdb
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_INSTALL_PLUGINS=
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+    links:
+      - influxdb
+    ports:
+      - '3000:3000'
+    volumes:
+      - /var/lib/docker/data/grafanadata:/var/lib/grafana
+
+  esphome:
+    container_name: esphome
+    image: ghcr.io/esphome/esphome
+    volumes:
+      - /var/lib/docker/data/esphome/config:/config
+    restart: always
+    privileged: true
+    network_mode: host
+
+    environment:
+      - ESPHOME_DASHBOARD_USE_PING=true
+      - USERNAME=esphome
+      - PASSWORD=esphome
   python_app:
     build: 
       context: .
       dockerfile: Dockerfile
-    networks:
-      - app
     volumes:
       - .:/app
     ports:
