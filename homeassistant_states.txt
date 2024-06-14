@@ -1,0 +1,664 @@
+Entity ID: person.aasem
+State: unknown
+Attributes: {'editable': True, 'id': 'aasem', 'device_trackers': [], 'user_id': '2454b9a11122461c998557a6b646c0fc', 'friendly_name': 'aasem'}
+
+Entity ID: person.visit
+State: unknown
+Attributes: {'editable': True, 'id': 'visit', 'device_trackers': [], 'friendly_name': 'visit'}
+
+Entity ID: person.nspanel
+State: unknown
+Attributes: {'editable': True, 'id': 'nspanel', 'device_trackers': ['device_tracker.px30_evb', 'device_tracker.tablet'], 'user_id': '006a6b19de3e42e7b70ec343588563b1', 'friendly_name': 'nspanel'}
+
+Entity ID: zone.home
+State: 0
+Attributes: {'latitude': 52.3731339, 'longitude': 4.8903147, 'radius': 100, 'passive': False, 'persons': [], 'editable': True, 'icon': 'mdi:home', 'friendly_name': 'Home'}
+
+Entity ID: script.solar_cloudy
+State: off
+Attributes: {'last_triggered': '2024-05-16T13:51:01.043179+00:00', 'mode': 'single', 'current': 0, 'icon': 'mdi:image-filter-drama', 'friendly_name': 'Solar Cloudy'}
+
+Entity ID: script.solar_full
+State: off
+Attributes: {'last_triggered': '2024-05-23T08:49:31.383421+00:00', 'mode': 'single', 'current': 0, 'icon': 'mdi:white-balance-sunny', 'friendly_name': 'Solar Full'}
+
+Entity ID: script.solar_disabled
+State: off
+Attributes: {'last_triggered': '2024-05-22T12:25:50.161520+00:00', 'mode': 'single', 'current': 0, 'icon': 'mdi:weather-sunny-off', 'friendly_name': 'Solar Disabled'}
+
+Entity ID: script.solar_variability
+State: off
+Attributes: {'last_triggered': '2024-05-21T14:40:42.447082+00:00', 'mode': 'single', 'current': 0, 'icon': 'mdi:chart-line-variant', 'friendly_name': 'Solar Variability'}
+
+Entity ID: script.smartgrid_default
+State: off
+Attributes: {'last_triggered': '2024-06-04T07:10:21.304388+00:00', 'mode': 'single', 'current': 0, 'icon': 'mdi:water-boiler-auto', 'friendly_name': 'SmartGrid Default'}
+
+Entity ID: script.smartgrid_recommended_on
+State: off
+Attributes: {'last_triggered': '2024-06-04T06:50:52.203642+00:00', 'mode': 'single', 'current': 0, 'icon': 'mdi:water-boiler', 'friendly_name': 'SmartGrid Recommended ON'}
+
+Entity ID: script.smartgrid_forced_on
+State: off
+Attributes: {'last_triggered': '2024-06-03T12:27:56.966116+00:00', 'mode': 'single', 'current': 0, 'icon': 'mdi:water-boiler-alert', 'friendly_name': 'SmartGrid Forced ON'}
+
+Entity ID: script.smartgrid_forced_off
+State: off
+Attributes: {'last_triggered': '2024-06-11T08:51:31.670614+00:00', 'mode': 'single', 'current': 0, 'icon': 'mdi:water-boiler-off', 'friendly_name': 'SmartGrid Forced OFF'}
+
+Entity ID: script.solar_toggle
+State: off
+Attributes: {'last_triggered': '2024-05-23T08:49:31.371996+00:00', 'mode': 'single', 'current': 0, 'icon': 'mdi:sun-snowflake', 'friendly_name': 'Solar Toggle'}
+
+Entity ID: input_number.house_load
+State: 3960.0
+Attributes: {'initial': None, 'editable': True, 'min': 0.0, 'max': 5000.0, 'step': 1.0, 'mode': 'slider', 'unit_of_measurement': 'W', 'icon': 'mdi:home-plus', 'friendly_name': 'House Load'}
+
+Entity ID: input_select.solar_options
+State: Full
+Attributes: {'options': ['Disabled', 'Cloudy', 'Full'], 'editable': True, 'icon': 'mdi:solar-power', 'friendly_name': 'Solar Options'}
+
+Entity ID: input_select.smartgrid
+State: Forced OFF
+Attributes: {'options': ['Default', 'Recommended ON', 'Forced OFF', 'Forced ON'], 'editable': True, 'icon': 'mdi:water-boiler', 'friendly_name': 'SmartGrid'}
+
+Entity ID: conversation.home_assistant
+State: unknown
+Attributes: {'friendly_name': 'Home Assistant'}
+
+Entity ID: input_text.ha_ip_address
+State: 192.168.69.130
+Attributes: {'editable': True, 'min': 0, 'max': 100, 'pattern': None, 'mode': 'text', 'icon': 'mdi:ip-network', 'friendly_name': 'ha_ip_address'}
+
+Entity ID: config_editor.version
+State: 4
+Attributes: {}
+
+Entity ID: sensor.pwr_solar
+State: 0.0
+Attributes: {'unit_of_measurement': 'W', 'friendly_name': 'pwr_solar'}
+
+Entity ID: sensor.pwr_home
+State: 3961.0
+Attributes: {'unit_of_measurement': 'W', 'friendly_name': 'pwr_home'}
+
+Entity ID: sensor.pwr_grid_consumption
+State: 3961.0
+Attributes: {'unit_of_measurement': 'W', 'friendly_name': 'pwr_grid_consumption'}
+
+Entity ID: sensor.time
+State: 12:09
+Attributes: {'icon': 'mdi:clock', 'friendly_name': 'Time'}
+
+Entity ID: sun.sun
+State: above_horizon
+Attributes: {'next_dawn': '2024-06-15T02:27:28.934961+00:00', 'next_dusk': '2024-06-14T20:54:19.668159+00:00', 'next_midnight': '2024-06-14T23:41:04+00:00', 'next_noon': '2024-06-14T11:40:44+00:00', 'next_rising': '2024-06-15T03:18:04.167243+00:00', 'next_setting': '2024-06-14T20:03:44.135061+00:00', 'elevation': 55.82, 'azimuth': 139.19, 'rising': True, 'friendly_name': 'Sun'}
+
+Entity ID: sensor.sun_next_dawn
+State: 2024-06-15T02:27:28+00:00
+Attributes: {'device_class': 'timestamp', 'friendly_name': 'Sun Next dawn'}
+
+Entity ID: sensor.sun_next_dusk
+State: 2024-06-14T20:54:19+00:00
+Attributes: {'device_class': 'timestamp', 'friendly_name': 'Sun Next dusk'}
+
+Entity ID: sensor.sun_next_midnight
+State: 2024-06-14T23:41:04+00:00
+Attributes: {'device_class': 'timestamp', 'friendly_name': 'Sun Next midnight'}
+
+Entity ID: sensor.sun_next_noon
+State: 2024-06-14T11:40:44+00:00
+Attributes: {'device_class': 'timestamp', 'friendly_name': 'Sun Next noon'}
+
+Entity ID: sensor.sun_next_rising
+State: 2024-06-15T03:18:04+00:00
+Attributes: {'device_class': 'timestamp', 'friendly_name': 'Sun Next rising'}
+
+Entity ID: sensor.sun_next_setting
+State: 2024-06-14T20:03:44+00:00
+Attributes: {'device_class': 'timestamp', 'friendly_name': 'Sun Next setting'}
+
+Entity ID: update.kiosk_mode_update
+State: off
+Attributes: {'auto_update': False, 'installed_version': 'v6.0.0', 'in_progress': False, 'latest_version': 'v6.0.0', 'release_summary': None, 'release_url': 'https://github.com/NemesisRE/kiosk-mode/releases/v6.0.0', 'skipped_version': None, 'title': None, 'friendly_name': 'Kiosk Mode update', 'supported_features': 23}
+
+Entity ID: update.config_editor_card_update
+State: off
+Attributes: {'auto_update': False, 'installed_version': '4.7', 'in_progress': False, 'latest_version': '4.7', 'release_summary': None, 'release_url': 'https://github.com/junkfix/config-editor-card/releases/4.7', 'skipped_version': None, 'title': None, 'friendly_name': 'Config Editor Card update', 'supported_features': 23}
+
+Entity ID: update.mini_graph_card_update
+State: off
+Attributes: {'auto_update': False, 'installed_version': 'v0.12.1', 'in_progress': False, 'latest_version': 'v0.12.1', 'release_summary': None, 'release_url': 'https://github.com/kalkih/mini-graph-card/releases/v0.12.1', 'skipped_version': None, 'title': None, 'friendly_name': 'mini-graph-card update', 'supported_features': 23}
+
+Entity ID: update.config_editor_update
+State: off
+Attributes: {'auto_update': False, 'installed_version': '4.4.0', 'in_progress': False, 'latest_version': '4.4.0', 'release_summary': None, 'release_url': 'https://github.com/junkfix/config-editor/releases/4.4.0', 'skipped_version': None, 'title': None, 'entity_picture': 'https://brands.home-assistant.io/_/config_editor/icon.png', 'friendly_name': 'Config Editor update', 'supported_features': 23}
+
+Entity ID: update.node_red_companion_update
+State: off
+Attributes: {'auto_update': False, 'installed_version': 'v4.0.0', 'in_progress': False, 'latest_version': 'v4.0.0', 'release_summary': None, 'release_url': 'https://github.com/zachowj/hass-node-red/releases/v4.0.0', 'skipped_version': None, 'title': None, 'entity_picture': 'https://brands.home-assistant.io/_/nodered/icon.png', 'friendly_name': 'Node-RED Companion update', 'supported_features': 23}
+
+Entity ID: update.hacs_update
+State: off
+Attributes: {'auto_update': False, 'installed_version': '1.34.0', 'in_progress': False, 'latest_version': '1.34.0', 'release_summary': None, 'release_url': 'https://github.com/hacs/integration/releases/1.34.0', 'skipped_version': None, 'title': None, 'entity_picture': 'https://brands.home-assistant.io/_/hacs/icon.png', 'friendly_name': 'HACS update', 'supported_features': 23}
+
+Entity ID: todo.shopping_list
+State: 0
+Attributes: {'friendly_name': 'Shopping List', 'supported_features': 15}
+
+Entity ID: sensor.shellybutton1_485519f0660b_battery
+State: unavailable
+Attributes: {'state_class': 'measurement', 'unit_of_measurement': '%', 'device_class': 'battery', 'friendly_name': 'shellybutton1-485519F0660B battery'}
+
+Entity ID: binary_sensor.shellyplusplugs_e86beae87700_switch_0_overheating
+State: off
+Attributes: {'device_class': 'problem', 'friendly_name': 'shellyplusplugs-e86beae87700 switch_0 overheating'}
+
+Entity ID: binary_sensor.shellyplusplugs_e86beae87700_switch_0_overpowering
+State: off
+Attributes: {'device_class': 'problem', 'friendly_name': 'shellyplusplugs-e86beae87700 switch_0 overpowering'}
+
+Entity ID: binary_sensor.shellyplusplugs_e86beae87700_switch_0_overvoltage
+State: off
+Attributes: {'device_class': 'problem', 'friendly_name': 'shellyplusplugs-e86beae87700 switch_0 overvoltage'}
+
+Entity ID: button.shellyplusplugs_e86beae87700_reboot
+State: unknown
+Attributes: {'device_class': 'restart', 'friendly_name': 'shellyplusplugs-e86beae87700 Reboot'}
+
+Entity ID: sensor.shellyplusplugs_e86beae87700_switch_0_power
+State: 0
+Attributes: {'state_class': 'measurement', 'unit_of_measurement': 'W', 'device_class': 'power', 'friendly_name': 'shellyplusplugs-e86beae87700 switch_0 power'}
+
+Entity ID: sensor.shellyplusplugs_e86beae87700_switch_0_energy
+State: 0.0
+Attributes: {'state_class': 'total_increasing', 'unit_of_measurement': 'kWh', 'device_class': 'energy', 'friendly_name': 'shellyplusplugs-e86beae87700 switch_0 energy'}
+
+Entity ID: switch.shellyplusplugs_e86beae87700_switch_0
+State: off
+Attributes: {'friendly_name': 'shellyplusplugs-e86beae87700 switch_0'}
+
+Entity ID: update.shellyplusplugs_e86beae87700_firmware_update
+State: off
+Attributes: {'auto_update': False, 'installed_version': '1.0.7', 'in_progress': False, 'latest_version': '1.0.7', 'release_summary': None, 'release_url': 'https://shelly-api-docs.shelly.cloud/gen2/changelog/', 'skipped_version': None, 'title': None, 'device_class': 'firmware', 'entity_picture': 'https://brands.home-assistant.io/_/shelly/icon.png', 'friendly_name': 'shellyplusplugs-e86beae87700 firmware update', 'supported_features': 5}
+
+Entity ID: device_tracker.px30_evb
+State: unknown
+Attributes: {'source_type': 'gps', 'friendly_name': 'px30_evb'}
+
+Entity ID: sensor.px30_evb_battery_level
+State: unknown
+Attributes: {'unit_of_measurement': '%', 'device_class': 'battery', 'icon': 'mdi:battery-charging', 'friendly_name': 'px30_evb Battery level'}
+
+Entity ID: sensor.px30_evb_battery_state
+State: unknown
+Attributes: {'icon': 'mdi:battery-plus', 'friendly_name': 'px30_evb Battery state'}
+
+Entity ID: sensor.px30_evb_charger_type
+State: unknown
+Attributes: {'icon': 'mdi:power-plug', 'friendly_name': 'px30_evb Charger type'}
+
+Entity ID: device_tracker.tablet
+State: unknown
+Attributes: {'source_type': 'gps', 'friendly_name': 'Lenovo TB-J706F'}
+
+Entity ID: sensor.lenovo_tb_j706f_battery_level
+State: 100
+Attributes: {'unit_of_measurement': '%', 'device_class': 'battery', 'icon': 'mdi:battery-charging', 'friendly_name': 'Lenovo TB-J706F Battery level'}
+
+Entity ID: sensor.lenovo_tb_j706f_battery_state
+State: full
+Attributes: {'icon': 'mdi:battery-charging', 'friendly_name': 'Lenovo TB-J706F Battery state'}
+
+Entity ID: sensor.lenovo_tb_j706f_charger_type
+State: ac
+Attributes: {'icon': 'mdi:power-plug', 'friendly_name': 'Lenovo TB-J706F Charger type'}
+
+Entity ID: sensor.local_ip
+State: 192.168.69.130
+Attributes: {'friendly_name': 'Local IP'}
+
+Entity ID: sensor.knx_interface_individual_address
+State: 1.5.3
+Attributes: {'friendly_name': 'KNX Interface Individual address'}
+
+Entity ID: sensor.knx_interface_connection_established
+State: 2024-06-14T09:40:22+00:00
+Attributes: {'device_class': 'timestamp', 'friendly_name': 'KNX Interface Connection established'}
+
+Entity ID: sensor.knx_interface_connection_type
+State: Tunnel UDP
+Attributes: {'options': [None, 'Routing', 'Routing IP Secure', 'Tunnel IP Secure', 'Tunnel TCP', 'Tunnel UDP'], 'device_class': 'enum', 'friendly_name': 'KNX Interface Connection type'}
+
+Entity ID: sensor.knx_interface_incoming_telegram_errors
+State: 0
+Attributes: {'state_class': 'total_increasing', 'friendly_name': 'KNX Interface Incoming telegram errors'}
+
+Entity ID: sensor.knx_interface_outgoing_telegram_errors
+State: 0
+Attributes: {'state_class': 'total_increasing', 'friendly_name': 'KNX Interface Outgoing telegram errors'}
+
+Entity ID: sensor.knx_interface_telegrams
+State: 4
+Attributes: {'state_class': 'total_increasing', 'friendly_name': 'KNX Interface Telegrams'}
+
+Entity ID: binary_sensor.zigbee2mqtt_bridge_connection_state_2
+State: on
+Attributes: {'device_class': 'connectivity', 'friendly_name': 'Zigbee2MQTT Bridge Connection state'}
+
+Entity ID: binary_sensor.0x00124b002fa17e62_occupancy
+State: off
+Attributes: {'device_class': 'motion', 'friendly_name': '0x00124b002fa17e62 Motion'}
+
+Entity ID: binary_sensor.0x00124b002fa17e62_battery_low
+State: off
+Attributes: {'device_class': 'battery', 'friendly_name': '0x00124b002fa17e62 Battery'}
+
+Entity ID: button.zigbee2mqtt_bridge_restart_2
+State: unknown
+Attributes: {'device_class': 'restart', 'friendly_name': 'Zigbee2MQTT Bridge Restart'}
+
+Entity ID: select.zigbee2mqtt_bridge_log_level_2
+State: info
+Attributes: {'options': ['info', 'warn', 'error', 'debug'], 'friendly_name': 'Zigbee2MQTT Bridge Log level'}
+
+Entity ID: select.wiser_thermostaat_keypad_lockout
+State: unknown
+Attributes: {'options': ['unlock', 'lock1', 'lock2'], 'icon': 'mdi:lock', 'friendly_name': 'wiser thermostaat Keypad lockout'}
+
+Entity ID: select.0x2c1165fffe1d0282_power_on_behavior
+State: unknown
+Attributes: {'options': ['off', 'previous', 'on'], 'icon': 'mdi:power-settings', 'friendly_name': '0x2c1165fffe1d0282 Power-on behavior'}
+
+Entity ID: select.0x2c1165fffe1d0282_indicator_mode
+State: unknown
+Attributes: {'options': ['off', 'off/on', 'on/off', 'on'], 'friendly_name': '0x2c1165fffe1d0282 Indicator mode'}
+
+Entity ID: select.0x385b44fffe0bb33b_color_power_on_behavior
+State: unknown
+Attributes: {'options': ['initial', 'previous', 'cutomized'], 'icon': 'mdi:palette', 'friendly_name': '0x385b44fffe0bb33b Color power on behavior'}
+
+Entity ID: tts.google_en_com
+State: unknown
+Attributes: {'friendly_name': 'Google en com'}
+
+Entity ID: sensor.zigbee2mqtt_bridge_version_2
+State: 1.36.1
+Attributes: {'icon': 'mdi:zigbee', 'friendly_name': 'Zigbee2MQTT Bridge Version'}
+
+Entity ID: sensor.wiser_thermostaat_humidity
+State: 62.2
+Attributes: {'state_class': 'measurement', 'unit_of_measurement': '%', 'device_class': 'humidity', 'friendly_name': 'wiser thermostaat Humidity'}
+
+Entity ID: sensor.esphome_web_cf8860_ipaddress1
+State: unavailable
+Attributes: {'friendly_name': 'esphome-web-cf8860 ipaddress1'}
+
+Entity ID: sensor.esphome_web_cf8860_ipaddress2
+State: unavailable
+Attributes: {'friendly_name': 'esphome-web-cf8860 ipaddress2'}
+
+Entity ID: sensor.esphome_web_cf8860_ipaddress3
+State: unavailable
+Attributes: {'friendly_name': 'esphome-web-cf8860 ipaddress3'}
+
+Entity ID: sensor.esphome_web_cf8860_ipaddress4
+State: unavailable
+Attributes: {'friendly_name': 'esphome-web-cf8860 ipaddress4'}
+
+Entity ID: sensor.esphome_web_cf8860_uipage
+State: unavailable
+Attributes: {'friendly_name': 'esphome-web-cf8860 UIpage'}
+
+Entity ID: sensor.esphome_web_cf8860_ip_address
+State: unknown
+Attributes: {'friendly_name': 'esphome-web-cf8860 ip_address'}
+
+Entity ID: sensor.esphome_web_cf8860_esp_ip_address
+State: 192.168.0.40
+Attributes: {'friendly_name': 'esphome-web-cf8860 esp_ip_address'}
+
+Entity ID: sensor.esphome_web_cf8860_esp_ip_address_0
+State: 192.168.0.40
+Attributes: {'friendly_name': 'esphome-web-cf8860 ESP IP Address 0'}
+
+Entity ID: binary_sensor.esphome_web_cf8860_sw3
+State: on
+Attributes: {'friendly_name': 'esphome-web-cf8860 SW3'}
+
+Entity ID: binary_sensor.esphome_web_cf8860_sw4
+State: on
+Attributes: {'friendly_name': 'esphome-web-cf8860 SW4'}
+
+Entity ID: binary_sensor.esphome_web_cf8860_sw2
+State: on
+Attributes: {'friendly_name': 'esphome-web-cf8860 SW2'}
+
+Entity ID: binary_sensor.esphome_web_cf8860_sw5
+State: off
+Attributes: {'friendly_name': 'esphome-web-cf8860 SW5'}
+
+Entity ID: binary_sensor.esphome_web_cf8860_sw1
+State: on
+Attributes: {'friendly_name': 'esphome-web-cf8860 SW1'}
+
+Entity ID: switch.esphome_web_cf8860_lcd_backlight
+State: on
+Attributes: {'friendly_name': 'esphome-web-cf8860 LCD Backlight'}
+
+Entity ID: switch.knx_smartgrid1
+State: off
+Attributes: {'friendly_name': 'KNX_SmartGrid1'}
+
+Entity ID: switch.knx_smartgrid2
+State: on
+Attributes: {'friendly_name': 'KNX_SmartGrid2'}
+
+Entity ID: switch.light_garage
+State: off
+Attributes: {'friendly_name': 'Light_Garage'}
+
+Entity ID: sensor.nodered_e5e701f73bb4212f
+State: unknown
+Attributes: {'friendly_name': 'nodered e5e701f73bb4212f'}
+
+Entity ID: switch.zigbee2mqtt_bridge_permit_join_2
+State: off
+Attributes: {'icon': 'mdi:human-greeting-proximity', 'friendly_name': 'Zigbee2MQTT Bridge Permit join'}
+
+Entity ID: sensor.wiser_thermostaat_battery
+State: 100
+Attributes: {'state_class': 'measurement', 'unit_of_measurement': '%', 'device_class': 'battery', 'friendly_name': 'wiser thermostaat Battery'}
+
+Entity ID: binary_sensor.esphome_web_3a489d_smartgrid_1
+State: off
+Attributes: {'friendly_name': 'esphome-web-3a489d SmartGrid 1'}
+
+Entity ID: binary_sensor.esphome_web_3a489d_smartgrid_2
+State: off
+Attributes: {'friendly_name': 'esphome-web-3a489d SmartGrid 2'}
+
+Entity ID: switch.esphome_web_3a489d_enable_floor_heating
+State: off
+Attributes: {'friendly_name': 'esphome-web-3a489d Enable Floor Heating'}
+
+Entity ID: switch.esphome_web_3a489d_consume_tap_water
+State: off
+Attributes: {'friendly_name': 'esphome-web-3a489d Consume Tap Water'}
+
+Entity ID: switch.esphome_web_3a489d_smartgrid_1_b
+State: off
+Attributes: {'friendly_name': 'esphome-web-3a489d SmartGrid 1 B'}
+
+Entity ID: switch.esphome_web_3a489d_smartgrid_2_b
+State: off
+Attributes: {'friendly_name': 'esphome-web-3a489d SmartGrid 2 B'}
+
+Entity ID: switch.esphome_web_3a489d_enable_pv_power
+State: off
+Attributes: {'friendly_name': 'esphome-web-3a489d Enable PV Power'}
+
+Entity ID: switch.esphome_web_3a489d_cloudy
+State: off
+Attributes: {'friendly_name': 'esphome-web-3a489d Cloudy'}
+
+Entity ID: switch.esphome_web_3a489d_pv_variability
+State: off
+Attributes: {'friendly_name': 'esphome-web-3a489d PV Variability'}
+
+Entity ID: sensor.esphome_web_3a489d_boiler_power
+State: 1.0
+Attributes: {'unit_of_measurement': 'W', 'device_class': 'power', 'friendly_name': 'esphome-web-3a489d Boiler Power'}
+
+Entity ID: sensor.esphome_web_3a489d_heating_power
+State: 0.0
+Attributes: {'unit_of_measurement': 'W', 'device_class': 'power', 'friendly_name': 'esphome-web-3a489d Heating Power'}
+
+Entity ID: sensor.esphome_web_3a489d_boiler_temperature
+State: 49.1
+Attributes: {'unit_of_measurement': '°C', 'device_class': 'temperature', 'friendly_name': 'esphome-web-3a489d Boiler Temperature'}
+
+Entity ID: sensor.esphome_web_3a489d_floor_heating_temp
+State: 20.0
+Attributes: {'unit_of_measurement': '°C', 'device_class': 'temperature', 'friendly_name': 'esphome-web-3a489d Floor Heating Temp'}
+
+Entity ID: sensor.esphome_web_3a489d_solar_power
+State: 0.0
+Attributes: {'unit_of_measurement': 'W', 'device_class': 'power', 'friendly_name': 'esphome-web-3a489d Solar Power'}
+
+Entity ID: sensor.esphome_web_3a489d_smartgrid_state
+State: Default
+Attributes: {'friendly_name': 'esphome-web-3a489d SmartGrid State'}
+
+Entity ID: binary_sensor.knx_tapwater
+State: off
+Attributes: {'friendly_name': 'KNX_Tapwater'}
+
+Entity ID: sensor.pwr_grid
+State: unknown
+Attributes: {'friendly_name': 'pwr_grid'}
+
+Entity ID: switch.0x2c1165fffe1d0282
+State: off
+Attributes: {'friendly_name': '0x2c1165fffe1d0282'}
+
+Entity ID: climate.wiser_thermostaat
+State: off
+Attributes: {'hvac_modes': ['auto', 'off', 'cool', 'heat', 'dry', 'fan_only'], 'min_temp': 4.0, 'max_temp': 30.0, 'target_temp_step': 0.5, 'current_temperature': 23.8, 'temperature': -0.5, 'friendly_name': 'wiser thermostaat', 'supported_features': 385}
+
+Entity ID: light.0x385b44fffe0bb33b
+State: on
+Attributes: {'min_color_temp_kelvin': 2000, 'max_color_temp_kelvin': 6535, 'min_mireds': 153, 'max_mireds': 500, 'effect_list': ['blink', 'breathe', 'okay', 'channel_change', 'finish_effect', 'stop_effect'], 'supported_color_modes': ['color_temp', 'xy'], 'effect': None, 'color_mode': 'xy', 'brightness': 255, 'color_temp_kelvin': None, 'color_temp': None, 'hs_color': [127.087, 99.608], 'rgb_color': [1, 255, 31], 'xy_color': [0.172, 0.735], 'friendly_name': '0x385b44fffe0bb33b', 'supported_features': 44}
+
+Entity ID: sensor.nodered_10183b768dbefa68
+State: unknown
+Attributes: {'friendly_name': 'nodered 10183b768dbefa68'}
+
+Entity ID: switch.0x385b44fffe0bb33b_do_not_disturb
+State: off
+Attributes: {'friendly_name': '0x385b44fffe0bb33b Do not disturb'}
+
+Entity ID: sensor.wiser_thermostaat_action
+State: None
+Attributes: {'icon': 'mdi:gesture-double-tap', 'friendly_name': 'wiser thermostaat Action'}
+
+Entity ID: sensor.wiser_thermostaat_pi_heating_demand
+State: unknown
+Attributes: {'unit_of_measurement': '%', 'icon': 'mdi:radiator', 'friendly_name': 'wiser thermostaat PI heating demand'}
+
+Entity ID: binary_sensor.knx_floorheater
+State: off
+Attributes: {'friendly_name': 'KNX_FloorHeater'}
+
+Entity ID: sensor.small_thermometer_battery
+State: 100
+Attributes: {'state_class': 'measurement', 'unit_of_measurement': '%', 'device_class': 'battery', 'friendly_name': 'small thermometer Battery'}
+
+Entity ID: sensor.small_thermometer_temperature
+State: 21.5
+Attributes: {'state_class': 'measurement', 'unit_of_measurement': '°C', 'device_class': 'temperature', 'friendly_name': 'small thermometer Temperature'}
+
+Entity ID: sensor.small_thermometer_humidity
+State: 50
+Attributes: {'state_class': 'measurement', 'unit_of_measurement': '%', 'device_class': 'humidity', 'friendly_name': 'small thermometer Humidity'}
+
+Entity ID: sensor.2btnpushsmall_battery
+State: 100
+Attributes: {'state_class': 'measurement', 'unit_of_measurement': '%', 'device_class': 'battery', 'friendly_name': '2BtnPushSmall Battery'}
+
+Entity ID: sensor.2btnpushsmall_action
+State: None
+Attributes: {'icon': 'mdi:gesture-double-tap', 'friendly_name': '2BtnPushSmall Action'}
+
+Entity ID: sensor.0x00124b002fa17e62_battery
+State: 100
+Attributes: {'state_class': 'measurement', 'unit_of_measurement': '%', 'device_class': 'battery', 'friendly_name': '0x00124b002fa17e62 Battery'}
+
+Entity ID: automation.tech_update_local_ip_address
+State: on
+Attributes: {'id': '1714992903190', 'last_triggered': '2024-06-14T09:40:19.990628+00:00', 'mode': 'single', 'current': 0, 'friendly_name': 'TECH_UPDATE_LOCAL_IP_ADDRESS'}
+
+Entity ID: automation.shelly_button_shelly_plug
+State: on
+Attributes: {'id': '1715585544005', 'last_triggered': '2024-05-16T13:56:40.927790+00:00', 'mode': 'single', 'current': 0, 'friendly_name': 'Shelly button -> Shelly plug'}
+
+Entity ID: automation.shelly_button_lidl_light
+State: on
+Attributes: {'id': '1715586290655', 'last_triggered': '2024-05-16T14:34:59.267157+00:00', 'mode': 'single', 'current': 0, 'friendly_name': 'Shelly button -> Lidl light'}
+
+Entity ID: automation.motion_sensor_detect_lidl_light_on
+State: on
+Attributes: {'id': '1715587225157', 'last_triggered': '2024-06-12T14:51:06.815129+00:00', 'mode': 'single', 'current': 0, 'friendly_name': 'sonoff Motion sensor detect -> Lidl light on'}
+
+Entity ID: automation.sonoff_motion_detect_end_lidl_light_off
+State: on
+Attributes: {'id': '1715587305377', 'last_triggered': '2024-06-13T11:46:54.592144+00:00', 'mode': 'single', 'current': 0, 'friendly_name': 'Sonoff motion detect end -> Lidl light off'}
+
+Entity ID: automation.shelly_button_lidl_zigbee_plug
+State: on
+Attributes: {'id': '1715601413670', 'last_triggered': '2024-05-15T13:35:14.683791+00:00', 'mode': 'single', 'current': 0, 'friendly_name': 'Shelly button -> Lidl zigbee plug'}
+
+Entity ID: automation.shelly_button_knx_licht_garage
+State: on
+Attributes: {'id': '1715601923966', 'last_triggered': '2024-05-16T14:35:10.470117+00:00', 'mode': 'single', 'current': 0, 'friendly_name': 'shelly button -> knx licht garage'}
+
+Entity ID: automation.solar_disable
+State: on
+Attributes: {'id': '1715602110197', 'last_triggered': '2024-05-22T12:25:50.159617+00:00', 'mode': 'single', 'current': 0, 'friendly_name': 'SOLAR_DISABLE'}
+
+Entity ID: automation.solar_cloudy
+State: on
+Attributes: {'id': '1715602139836', 'last_triggered': '2024-05-16T13:51:01.039637+00:00', 'mode': 'single', 'current': 0, 'friendly_name': 'SOLAR_CLOUDY'}
+
+Entity ID: automation.solar_full
+State: on
+Attributes: {'id': '1715602159621', 'last_triggered': '2024-05-23T08:49:31.380582+00:00', 'mode': 'single', 'current': 0, 'friendly_name': 'SOLAR_FULL'}
+
+Entity ID: automation.smartgrid_default
+State: on
+Attributes: {'id': '1715604443104', 'last_triggered': '2024-06-04T07:10:21.302444+00:00', 'mode': 'single', 'current': 0, 'friendly_name': 'SMARTGRID_DEFAULT'}
+
+Entity ID: automation.smartgrid_forced_on
+State: on
+Attributes: {'id': '1715604467713', 'last_triggered': '2024-06-03T12:27:56.964135+00:00', 'mode': 'single', 'current': 0, 'friendly_name': 'SMARTGRID_FORCED_ON'}
+
+Entity ID: automation.smartgrid_forced_off
+State: on
+Attributes: {'id': '1715604485893', 'last_triggered': '2024-06-11T08:51:31.666306+00:00', 'mode': 'single', 'current': 0, 'friendly_name': 'SMARTGRID_FORCED_OFF'}
+
+Entity ID: automation.smartgrid_recommended_on
+State: on
+Attributes: {'id': '1715604499287', 'last_triggered': '2024-06-04T06:50:52.201720+00:00', 'mode': 'single', 'current': 0, 'friendly_name': 'SMARTGRID_RECOMMENDED_ON'}
+
+Entity ID: automation.smartgrid_default_on
+State: on
+Attributes: {'id': '1715610210295', 'last_triggered': '2024-06-03T12:27:46.948439+00:00', 'mode': 'single', 'current': 0, 'friendly_name': 'SMARTGRID_ON_RECOMMENDED'}
+
+Entity ID: automation.smartgrid_on_forced
+State: on
+Attributes: {'id': '1715610261521', 'last_triggered': '2024-06-03T12:27:56.948948+00:00', 'mode': 'single', 'current': 0, 'friendly_name': 'SMARTGRID_ON_FORCED'}
+
+Entity ID: automation.smartgrid_off_forced
+State: on
+Attributes: {'id': '1715610328593', 'last_triggered': '2024-05-28T08:01:32.888049+00:00', 'mode': 'single', 'current': 0, 'friendly_name': 'SMARTGRID_OFF_FORCED'}
+
+Entity ID: automation.power_consumption_light
+State: on
+Attributes: {'id': '1715611098447', 'last_triggered': '2024-06-03T12:06:23.621019+00:00', 'mode': 'single', 'current': 0, 'friendly_name': 'POWER_CONSUMPTION_LIGHT'}
+
+Entity ID: automation.power_injection_light
+State: on
+Attributes: {'id': '1715611130867', 'last_triggered': '2024-06-03T12:06:36.618441+00:00', 'mode': 'single', 'current': 0, 'friendly_name': 'POWER_INJECTION_LIGHT'}
+
+Entity ID: automation.knx_tapwater_on
+State: on
+Attributes: {'id': '1715613119348', 'last_triggered': '2024-06-11T08:52:20.678036+00:00', 'mode': 'single', 'current': 0, 'friendly_name': 'KNX_TAPWATER_ON'}
+
+Entity ID: automation.knx_tapwater_off
+State: on
+Attributes: {'id': '1715613156451', 'last_triggered': '2024-06-14T09:40:22.254860+00:00', 'mode': 'single', 'current': 0, 'friendly_name': 'KNX_TAPWATER_OFF'}
+
+Entity ID: automation.knx_floorheating_off
+State: on
+Attributes: {'id': '1715614203925', 'last_triggered': '2024-06-14T09:40:22.281564+00:00', 'mode': 'single', 'current': 0, 'friendly_name': 'KNX_FLOORHEATING_OFF'}
+
+Entity ID: automation.knx_floorheating_on
+State: on
+Attributes: {'id': '1715614226396', 'last_triggered': '2024-06-04T06:55:04.380052+00:00', 'mode': 'single', 'current': 0, 'friendly_name': 'KNX_FLOORHEATING_ON'}
+
+Entity ID: binary_sensor.zigbee2mqtt_bridge_connection_state
+State: unavailable
+Attributes: {'restored': True, 'device_class': 'connectivity', 'friendly_name': 'Connection state', 'supported_features': 0}
+
+Entity ID: button.knx_smartgrid1
+State: unavailable
+Attributes: {'restored': True, 'friendly_name': 'KNX_SmartGrid1', 'supported_features': 0}
+
+Entity ID: button.knx_smartgrid2
+State: unavailable
+Attributes: {'restored': True, 'friendly_name': 'KNX_SmartGrid2', 'supported_features': 0}
+
+Entity ID: sensor.gas_meter_gas_consumption
+State: unavailable
+Attributes: {'restored': True, 'state_class': 'total_increasing', 'device_class': 'gas', 'friendly_name': 'Gas consumption', 'supported_features': 0, 'unit_of_measurement': 'm³'}
+
+Entity ID: sensor.electricity_meter_timestamp_2
+State: unavailable
+Attributes: {'restored': True, 'device_class': 'timestamp', 'friendly_name': 'Timestamp', 'supported_features': 0}
+
+Entity ID: sensor.electricity_meter_power_consumption_2
+State: unavailable
+Attributes: {'restored': True, 'state_class': 'measurement', 'device_class': 'power', 'friendly_name': 'Power consumption', 'supported_features': 0, 'unit_of_measurement': 'kW'}
+
+Entity ID: sensor.electricity_meter_power_production_2
+State: unavailable
+Attributes: {'restored': True, 'state_class': 'measurement', 'device_class': 'power', 'friendly_name': 'Power production', 'supported_features': 0, 'unit_of_measurement': 'kW'}
+
+Entity ID: sensor.electricity_meter_active_tariff
+State: unavailable
+Attributes: {'restored': True, 'options': ['low', 'normal'], 'device_class': 'enum', 'friendly_name': 'Active tariff', 'supported_features': 0}
+
+Entity ID: sensor.electricity_meter_energy_consumption_tarif_1
+State: unavailable
+Attributes: {'restored': True, 'state_class': 'total_increasing', 'device_class': 'energy', 'friendly_name': 'Energy consumption (tarif 1)', 'supported_features': 0, 'unit_of_measurement': 'kWh'}
+
+Entity ID: sensor.electricity_meter_energy_consumption_tarif_2
+State: unavailable
+Attributes: {'restored': True, 'state_class': 'total_increasing', 'device_class': 'energy', 'friendly_name': 'Energy consumption (tarif 2)', 'supported_features': 0, 'unit_of_measurement': 'kWh'}
+
+Entity ID: sensor.electricity_meter_energy_production_tarif_1
+State: unavailable
+Attributes: {'restored': True, 'state_class': 'total_increasing', 'device_class': 'energy', 'friendly_name': 'Energy production (tarif 1)', 'supported_features': 0, 'unit_of_measurement': 'kWh'}
+
+Entity ID: sensor.electricity_meter_energy_production_tarif_2
+State: unavailable
+Attributes: {'restored': True, 'state_class': 'total_increasing', 'device_class': 'energy', 'friendly_name': 'Energy production (tarif 2)', 'supported_features': 0, 'unit_of_measurement': 'kWh'}
+
+Entity ID: sensor.electricity_meter_power_consumption_phase_l1_2
+State: unavailable
+Attributes: {'restored': True, 'state_class': 'measurement', 'device_class': 'power', 'friendly_name': 'Power consumption phase L1', 'supported_features': 0, 'unit_of_measurement': 'kW'}
+
+Entity ID: sensor.electricity_meter_power_production_phase_l1_2
+State: unavailable
+Attributes: {'restored': True, 'state_class': 'measurement', 'device_class': 'power', 'friendly_name': 'Power production phase L1', 'supported_features': 0, 'unit_of_measurement': 'kW'}
+
+Entity ID: sensor.electricity_meter_voltage_phase_l1_2
+State: unavailable
+Attributes: {'restored': True, 'state_class': 'measurement', 'device_class': 'voltage', 'friendly_name': 'Voltage phase L1', 'supported_features': 0, 'unit_of_measurement': 'V'}
+
+Entity ID: sensor.electricity_meter_current_phase_l1_2
+State: unavailable
+Attributes: {'restored': True, 'state_class': 'measurement', 'device_class': 'current', 'friendly_name': 'Current phase L1', 'supported_features': 0, 'unit_of_measurement': 'A'}
+
+Entity ID: sensor.electricity_meter_max_power_per_phase
+State: unavailable
+Attributes: {'restored': True, 'state_class': 'measurement', 'device_class': 'power', 'friendly_name': 'Max power per phase', 'supported_features': 0, 'unit_of_measurement': 'kW'}
+
+Entity ID: sensor.electricity_meter_max_current_per_phase
+State: unavailable
+Attributes: {'restored': True, 'state_class': 'measurement', 'device_class': 'current', 'friendly_name': 'Max current per phase', 'supported_features': 0, 'unit_of_measurement': 'A'}
+
+Entity ID: sensor.zigbee2mqtt_bridge_permit_join_timeout_2
+State: unavailable
+Attributes: {'restored': True, 'device_class': 'duration', 'friendly_name': 'Permit join timeout', 'supported_features': 0, 'unit_of_measurement': 's'}
+

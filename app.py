@@ -51,7 +51,7 @@ client_homeass = Client(homeass, homeass_token)
 host = 'http://192.168.69.130:8086'
 
 token = "1u-igc54ZvzdkB-XJqZJJMiyNAKhKiasINgl7HfGnJcED_DGQpje3a1-gpqogFfrVebr92z0rjcTAP5eEQYDYA=="
-org = "beheerder"
+org = "myorg"
 client = InfluxDBClient(url=host, token=token, org=org)
 
 dbconnecstop = time.time()
@@ -178,7 +178,7 @@ def run_SNARIMAX():
 	
 	current_time = start_time
 	while current_time <= end_time and training_running == 1:
-		stop_time = current_time + timedelta(days=30)
+		stop_time = current_time + timedelta(hours=1)
 		start_str = current_time.strftime('%Y-%m-%dT%H:%M:%SZ')
 		stop_str = stop_time.strftime('%Y-%m-%dT%H:%M:%SZ')
 		print(f"Training from {start_str} to {stop_str}")
@@ -343,30 +343,25 @@ def run_TIDE():
 
 		
 
-					print(actual_time_limit in latest_prediction_limit)
 					if len(latest_prediction) >0:
-
-						if len(latest_prediction) > prediction_length:
-							print(latest_prediction[-prediction_length:][0][1])		
-
-						if len(latest_prediction) > prediction_length + 1 and latest_prediction[-prediction_length:][0][1] > 1 and (actual_time_limit in latest_prediction_limit):
+						if len(latest_prediction) > prediction_length + 1 and latest_prediction[-prediction_length:][0][1] > 0.1 and (actual_time_limit in latest_prediction_limit):
 	
 							print("Switching on the light")	
 							try:
-								new_state = client_homeass.set_state(State(entity_id='input_boolean.test_switch', state='on'))
+								client_homeass.trigger_service("switch", "turn_on", entity_id="switch.shellyplusplugs_e86beae87700_switch_0")
 							except:
 								print("no homeassistant connection")
 						else:
 							#print("Switching off the light")
 							try:
-								new_state = client_homeass.set_state(State(entity_id='input_boolean.test_switch', state='off'))
+								client_homeass.trigger_service("switch", "turn_off", entity_id="switch.shellyplusplugs_e86beae87700_switch_0")
 							except:
 								print("no homeassistant connection")
 
 
 				end_time_sleep = time.time()  # End time of the loop
 				loop_time = end_time_sleep - start_time_sleep  # Time taken by the loop
-				sleep_time = max(0.1 - loop_time, 0)  # Sleep time (100ms - loop time), but not less than 0
+				sleep_time = max(0.5 - loop_time, 0)  # Sleep time (100ms - loop time), but not less than 0
 				time.sleep(sleep_time)
 		current_time = stop_time
 	training_running = 0
