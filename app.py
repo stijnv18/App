@@ -42,21 +42,19 @@ prev_prediction_length = 0
 
 dbconnecttime = time.time()
 
-homeass = "http://homeassistant:8123/api/"
+homeass = "http://192.168.69.130:8123/api/"
 
-homeass_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiIzODM2ODY2OWNhNTQ0MGRlODk5ODA5NGJjZmJiMjMyNiIsImlhdCI6MTcxODA5NjQ2OSwiZXhwIjoyMDMzNDU2NDY5fQ.V_3CZP7ZcR5eHNHAJmUOJlh-9wOQoF8ZzXxmSd5Mz_8"
+homeass_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJlYjA1MTZiMDliMDE0NjI5YTViZWVhZGFlMmQ3ODcwNiIsImlhdCI6MTcxODI4NDUzOSwiZXhwIjoyMDMzNjQ0NTM5fQ.c36_A67ImCeG9pecsC7Ec7pYCQkj7omKwgQvQyEKU7M"
 client_homeass = Client(homeass, homeass_token)
 
 # Connect to the InfluxDB server
-host = 'http://influxdb:8086'
+host = 'http://192.168.69.130:8086'
 
-token = "A8N8FW0T9zLcF5Rx7hwZfAs10ADmNxqQtqi9t3c_L6s59RjeXbcZRXC2nqgb8RgmSBQzwcMJJxS7EenDP3-P1Q=="
+token = "1u-igc54ZvzdkB-XJqZJJMiyNAKhKiasINgl7HfGnJcED_DGQpje3a1-gpqogFfrVebr92z0rjcTAP5eEQYDYA=="
 org = "beheerder"
 client = InfluxDBClient(url=host, token=token, org=org)
 
 dbconnecstop = time.time()
-homeass = "http://homeassistant.home:8123/"
-homeass_token = "Bearer" + " " + "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiI2ZjQwMzQwYzQwZjg0ZjQwYjQwZjQwZjQwZjQwZjQwZjQiLCJpYXQiOjE2MjYwNjYwNzYsImV4cCI6MTY1NjYwNjA3Nn0.1Z6"
 print("Elapsed time connecting to db: ", dbconnecstop - dbconnecttime)
 
 requesttime = time.time()
