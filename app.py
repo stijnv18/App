@@ -342,17 +342,15 @@ def run_TIDE():
 					latest_prediction_limit = [item.tz_localize(None) for item in latest_prediction_limit]
 
 		
-
-					if len(latest_prediction) >0:
-						if len(latest_prediction) > prediction_length + 1 and latest_prediction[-prediction_length:][0][1] > 0.1 and (actual_time_limit in latest_prediction_limit):
-	
-							print("Switching on the light")	
+					if len(latest_prediction) > prediction_length + 3:  # Check if we have at least the next 3 hours of prediction
+						next_3_hours_prediction = [item[1] for item in latest_prediction[-prediction_length-3:-prediction_length]]
+						if all(value > 0.1 for value in next_3_hours_prediction) and (actual_time_limit in latest_prediction_limit):
+							print("Switching on the light")
 							try:
 								client_homeass.trigger_service("switch", "turn_on", entity_id="switch.shellyplusplugs_e86beae87700_switch_0")
 							except:
 								print("no homeassistant connection")
 						else:
-							#print("Switching off the light")
 							try:
 								client_homeass.trigger_service("switch", "turn_off", entity_id="switch.shellyplusplugs_e86beae87700_switch_0")
 							except:
